@@ -36,7 +36,9 @@
     <string name="email_save_message">E-Mail address has been successfully saved.</string>
     <!-- Strings to support Candidate Entry -->
     <string name="edit_candidate_intro">Enter new person here.</string>
-    <string name="edit_candidate_hint">Enter new person Name.</string>
+    <string name="edit_candidate_hint">Enter new person\'s name.</string>
+    <string name="edit_nickname_intro">Enter nick name here.</string>
+    <string name="edit_nickname_hint">Enter nick name.</string>
     <string name="edit_candidate_icon_label">Icon</string>
     <string name="edit_candidate_initials_label">Icon Initials</string>
     <string name="edit_candidate_initials_hint">Edit Initials.</string>

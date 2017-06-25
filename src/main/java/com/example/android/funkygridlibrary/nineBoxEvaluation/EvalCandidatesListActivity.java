@@ -163,10 +163,19 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
                                     // TODO send this back in the intent bundle
 //                                    MainActivity.setCurrentCandidate(position);
                                     Intent intent = new Intent(view.getContext(), Evaluation.class);
-                                    intent.putExtra("position", Long.toString(position));
-                                    intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
 
-                                    startActivity(intent);
+                                    Bundle extras = new Bundle();
+                                    extras.putString("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
+                                    intent.putExtras(extras);
+
+//                                    intent.putExtra("position", Long.toString(position));
+//                                    intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
+
+                                    // TODO Remove
+                                    System.out.println( " *****  About to call Evaluation.class ****");
+                                    System.out.println("position = " + Long.toString(position));
+
+                                            startActivity(intent);
                                 }
                             });
                     // I know it's odd to have the progress icon as it's own target - but doing the same thing as the primary target ...

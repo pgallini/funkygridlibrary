@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions_data>
-    <record question_id="1"    question_text="[Communication]  Degree to which candidate prepares communications in a timely, clear and accurate manner; ability to tailor to audience."        question_weight="14"  question_axis="Y" />
+    <record question_id="1"    question_text="Imagine that you have a date with %%NAME%% tomorrow.  How excited are you too see them? "                                                         question_weight="14"  question_axis="Y" />
     <record question_id="2"    question_text="[Organization/Planning]  Degree to which candidate prioritizes activities and makes effective use of time."                                       question_weight="13"  question_axis="Y" />
     <record question_id="3"    question_text="[Job-Specific Knowledge] Degree to which candidate demonstrates expertise in job-specific knowledge and works to expand it."                      question_weight="18"  question_axis="Y" />
     <record question_id="4"    question_text="[Decision Making] Degree to which candidate identifies and analyzes problems/opportunities and evaluates optimal options (in timely manner with appropriate socialization)." question_weight="18"  question_axis="Y" />

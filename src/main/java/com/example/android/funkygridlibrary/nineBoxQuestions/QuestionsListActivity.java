@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.funkygridlibrary.R;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -45,8 +46,9 @@ public class QuestionsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // grab resources
-        Resources R = getResources();
-        setContentView(R.getIdentifier("questions_list", "id", getPackageName()));
+//        Resources R = getResources();
+//        setContentView(R.getIdentifier("questions_list", "id", getPackageName()));
+        setContentView(R.layout.questions_list);
 
         // set-up questions ...
         QuestionsOperations questionsOperations = new QuestionsOperations(this);
@@ -57,7 +59,9 @@ public class QuestionsListActivity extends AppCompatActivity {
         displayList = buildDisplayList(questionsList);
 
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
-        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id",  getPackageName()));
+//        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id",  getPackageName()));
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
         setSupportActionBar(toolbar);
 
         // Obtain the shared Tracker instance.
@@ -67,57 +71,59 @@ public class QuestionsListActivity extends AppCompatActivity {
 //        sendScreenImageName(); // send tag to Google Analytics
 
         // find the ListView so we can work with it ...
-//        mainListView = (ListView) findViewById(R.id.questions_list);
-        mainListView = (ListView) findViewById(R.getIdentifier("questions_list", "id", getPackageName()));
+        mainListView = (ListView) findViewById(R.id.questions_list);
+//        mainListView = (ListView) findViewById(R.getIdentifier("questions_list", "id", getPackageName()));
 
-//        mainArrayAdapter = new ArrayAdapter<String>(this, R.layout.questions_list_item, R.id.question_text, displayList) {
-        mainArrayAdapter = new ArrayAdapter<String>(this, R.getIdentifier("questions_list_item", "id", getPackageName()),
-                    R.getIdentifier("question_text", "id", getPackageName()), displayList) {
+        mainArrayAdapter = new ArrayAdapter<String>(this, R.layout.questions_list_item, R.id.question_text, displayList) {
+//        mainArrayAdapter = new ArrayAdapter<String>(this, R.getIdentifier("questions_list_item", "id", getPackageName()),
+//                    R.getIdentifier("question_text", "id", getPackageName()), displayList) {
 
             @Override
             public View getView(final int position, View convertView, ViewGroup parent) {
                 // grab resources
-                Resources R = getResources();
+//                Resources R = getResources();
                 if (convertView == null) {
-                    convertView = getLayoutInflater().inflate(R.getIdentifier("questions_list_item", "id", getPackageName()), parent, false);
+//                    convertView = getLayoutInflater().inflate(R.getIdentifier("questions_list_item", "id", getPackageName()), parent, false);
+                    convertView = getLayoutInflater().inflate(R.layout.questions_list_item, parent, false);
+
                 }
 
                 View view = super.getView(position, convertView, parent);
 
                 // set the Question ID on the view
-//                TextView questionId = (TextView) view.findViewById(R.id.question_id);
-                TextView questionId = (TextView) view.findViewById(R.getIdentifier("question_id", "id", getPackageName()));
+                TextView questionId = (TextView) view.findViewById(R.id.question_id);
+//                TextView questionId = (TextView) view.findViewById(R.getIdentifier("question_id", "id", getPackageName()));
 
                 questionId.setText(Long.toString(questionsList.get(position).getQuestionID()));
 
                 // set the Question Text on the view
-//                TextView questionText = (TextView) view.findViewById(R.id.question_text);
-                TextView questionText = (TextView) view.findViewById(R.getIdentifier("question_text", "id", getPackageName()));
+                TextView questionText = (TextView) view.findViewById(R.id.question_text);
+//                TextView questionText = (TextView) view.findViewById(R.getIdentifier("question_text", "id", getPackageName()));
 
                 Resources res = getResources();
-//                int subLength = res.getInteger( R.integer.questionTextSubLegth);
+                int subLength = res.getInteger( R.integer.questionTextSubLegth);
                 // TODO - not sure if integer is the correct second param here
-                int subLength = res.getInteger( R.getIdentifier("questionTextSubLegth", "integer", getPackageName()));
+//                int subLength = res.getInteger( R.getIdentifier("questionTextSubLegth", "integer", getPackageName()));
 
 
                 questionText.setText(questionsList.get(position).getQuestionText(subLength));
 
                 // set the Question Weight on the view
-//                TextView questionWeight = (TextView) view.findViewById(R.id.question_weight);
-                TextView questionWeight = (TextView) view.findViewById(R.getIdentifier("question_weight", "id", getPackageName()));
+                TextView questionWeight = (TextView) view.findViewById(R.id.question_weight);
+//                TextView questionWeight = (TextView) view.findViewById(R.getIdentifier("question_weight", "id", getPackageName()));
 
                 questionWeight.setText(Long.toString(questionsList.get(position).getQuestionWeight()) + "%");
 
                 // set the Question Axis on the view
-//                TextView questionAxis = (TextView) view.findViewById(R.id.question_axis);
-                TextView questionAxis = (TextView) view.findViewById(R.getIdentifier("question_axis", "id", getPackageName()));
+                TextView questionAxis = (TextView) view.findViewById(R.id.question_axis);
+//                TextView questionAxis = (TextView) view.findViewById(R.getIdentifier("question_axis", "id", getPackageName()));
 
                 questionAxis.setText(questionsList.get(position).getQuestionAxis() + " Axis");
 
                 // Because the list item contains multiple touch targets, you should not override
                 // onListItemClick. Instead, set a click listener for each target individually.
-//                convertView.findViewById(R.id.primary_target).setOnClickListener(
-                convertView.findViewById(R.getIdentifier("primary_target", "id", getPackageName())).setOnClickListener(
+                convertView.findViewById(R.id.primary_target).setOnClickListener(
+//                convertView.findViewById(R.getIdentifier("primary_target", "id", getPackageName())).setOnClickListener(
 
                         new View.OnClickListener() {
                             @Override
@@ -131,7 +137,7 @@ public class QuestionsListActivity extends AppCompatActivity {
                                 startActivityForResult(intent, QUESTIONSUPDATE_ACTIVITY_REQUEST_CODE);
                             }
                         });
-                convertView.findViewById(R.getIdentifier("delete_action", "id", getPackageName())).setOnClickListener(
+                convertView.findViewById(R.id.delete_action).setOnClickListener(
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -146,14 +152,14 @@ public class QuestionsListActivity extends AppCompatActivity {
 
         mainListView.setAdapter(mainArrayAdapter);
 
-        findViewById(R.getIdentifier("cancel_button", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        findViewById(R.getIdentifier("ok_button", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.ok_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -295,10 +301,10 @@ public class QuestionsListActivity extends AppCompatActivity {
      */
     private void sendScreenImageName() {
         // grab resources
-        Resources R = getResources();
+//        Resources R = getResources();
         // TODO see how to diffrentiate between adding and editing a candidate
-//        String name = getResources().getString(R.string.anal_tag_questions_list);
-        String name = getResources().getString(R.getIdentifier("anal_tag_questions_list", "string", getPackageName()));
+        String name = getResources().getString(R.string.anal_tag_questions_list);
+//        String name = getResources().getString(R.getIdentifier("anal_tag_questions_list", "string", getPackageName()));
 
 
         mTracker.setScreenName("Image~" + name);

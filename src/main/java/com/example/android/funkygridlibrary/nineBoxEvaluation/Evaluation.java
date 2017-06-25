@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.funkygridlibrary.R;
 import com.example.android.funkygridlibrary.common.Utilities;
@@ -29,11 +30,12 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 
 /**
  * Created by Paul Gallini on 4/17/16.
- *
+ * <p>
  * The slider drawables are generated from here:  http://android-holo-colors.com/
  */
 public class Evaluation extends AppCompatActivity implements OnShowcaseEventListener {
@@ -68,142 +70,161 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int returnCode = 0;
-        // grab resources
-//        Resources R = getResources();
         Intent intent = getIntent();
-        String currentPositionString = intent.getStringExtra("position");
-        setCurrentCandidateIndex(Integer.parseInt(currentPositionString));
+        // While testing with an emulator - every now and then the intent is null.  I cannot figure it out ... so we need to trap for ull
+        if (intent == null) {
+            super.onCreate(savedInstanceState);
+            Toast.makeText(Evaluation.this, "Opps!  Something went wrong - please try again.", Toast.LENGTH_LONG);
+            finish();
+        } else {
 
-        super.onCreate(savedInstanceState);
-//        setContentView(R.getIdentifier("evaluation_entry", "id", getPackageName()));
-        setContentView(R.layout.evaluation_entry);
+            String currentPositionString = intent.getStringExtra("com.example.android.funkygridlibrary.nineBoxEvaluation.position");
 
+            // TODO Remove
+            System.out.println(" *****  Inside  Evaluation.class ****");
+            System.out.println("currentPositionString = " + currentPositionString);
 
-        CandidateOperations candidateOperations;
-        // set-up the operations class for Candidates ...
-        candidateOperations = new CandidateOperations(this);
-        candidateOperations.open();
-        // create a list of candidates from what's in the database ...
-        candidatesList = candidateOperations.getAllCandidates();
+            // While testing with an emulator - every now and then the intent is null.  I cannot figure it out ... so we need to trap for ull
+            if (currentPositionString == null) {
+                super.onCreate(savedInstanceState);
+                Toast.makeText(Evaluation.this, "Opps!  Something went wrong - please try again.", Toast.LENGTH_LONG);
+                finish();
+            } else {
+                setCurrentCandidateIndex(Integer.parseInt(currentPositionString));
 
-        // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
-//        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id", getPackageName()));
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.evaluation_entry);
 
-        // set-up questions ...
-        QuestionsOperations questionsOperations = new QuestionsOperations(this);
-        questionsOperations.open();
-        questionsList = questionsOperations.getAllQuestions();
-        maxQuestionNo = questionsList.size();
+                CandidateOperations candidateOperations;
+                // set-up the operations class for Candidates ...
+                candidateOperations = new CandidateOperations(this);
+                candidateOperations.open();
+                // create a list of candidates from what's in the database ...
+                candidatesList = candidateOperations.getAllCandidates();
 
-        if(maxQuestionNo < 1 ) {
-            // If there are NO questions, then show a dialog to explain the situation and quit
-            showNoQuestionsDialog();
-        }
+                // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
+                toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                setSupportActionBar(toolbar);
 
-//        final TextView nextQuestionButtonView = (TextView) findViewById(R.getIdentifier("next_question_button", "id", getPackageName()));
-        final TextView nextQuestionButtonView = (TextView) findViewById(R.id.next_question_button);
+                // set-up questions ...
+                QuestionsOperations questionsOperations = new QuestionsOperations(this);
+                questionsOperations.open();
+                questionsList = questionsOperations.getAllQuestions();
+                maxQuestionNo = questionsList.size();
 
-        // Obtain the shared Tracker instance.
-        // TODO uncomment these lines when you add analytics back
-//        common.AnalyticsApplication application = (common.AnalyticsApplication) getApplication();
-//        mTracker = application.getDefaultTracker();
-//        sendScreenImageName(); // send tag to Google Analytics
+                if (maxQuestionNo < 1) {
+                    // If there are NO questions, then show a dialog to explain the situation and quit
+                    showNoQuestionsDialog();
+                }
 
-//        SeekBar seek = (SeekBar) findViewById(R.getIdentifier("responseSeekBar", "id", getPackageName()));
-        SeekBar seek = (SeekBar) findViewById(R.id.responseSeekBar);
-        final TextView seekBarValue = (TextView)findViewById(R.id.seekbarvalue);
-
-        seek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                currentResponse = progress;
-                // Display the current value of the seekBar ...
-                seekBarValue.setText(String.valueOf(progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(final SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(final SeekBar seekBar) {
-            }
-        });
-
-
-
-//        findViewById(R.getIdentifier("next_question_button", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
-        findViewById(R.id.next_question_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-            public void onClick(View v) {
-                // save the response
-//                int candidateIndex = MainActivity.getCurrentCandidate();
-                // TODO make sure position is really the same thing as index
+                // For the current candidate, see if we have any responses - if we do - jump to the next question
+                EvaluationOperations evaluationOperations = new EvaluationOperations(this);
+                evaluationOperations.open();
                 int candidateIndex = getCurrentCandidateIndex();
-                // grab resources
-                Resources R = getResources();
+                long candidateID = candidatesList.get( candidateIndex ).getCandidateID();
+                int responseCnt = evaluationOperations.getResponseCnt(candidateID);
+                if( responseCnt > 0 && responseCnt < maxQuestionNo ) {
+                    // if the count of responses is between 0 and total question count, then lets jump to the next question ...
+                    currentQuestionNo = responseCnt + 1;
+                }
 
-                if (candidateIndex < candidatesList.size()) {
+                final TextView nextQuestionButtonView = (TextView) findViewById(R.id.next_question_button);
 
-                    if ((currentQuestionNo - 1) <= questionsList.size()) {
-                        saveResponse(candidatesList.get(candidateIndex).getCandidateID(), questionsList.get((currentQuestionNo - 1)).getQuestionID(), currentResponse);
-                        if (currentQuestionNo < maxQuestionNo) {
-                            currentQuestionNo++;
-                            if (currentQuestionNo == maxQuestionNo) {
-                                // if we are now on the last question, change the text of the button to Next Candidate or Done
-                                if (candidateIndex == (candidatesList.size() - 1)) {
-                                    nextQuestionButtonView.setText(R.getIdentifier("done_button", "string", getPackageName()));
+                // Obtain the shared Tracker instance.
+                // TODO uncomment these lines when you add analytics back
+                //        common.AnalyticsApplication application = (common.AnalyticsApplication) getApplication();
+                //        mTracker = application.getDefaultTracker();
+                //        sendScreenImageName(); // send tag to Google Analytics
+
+                //        SeekBar seek = (SeekBar) findViewById(R.getIdentifier("responseSeekBar", "id", getPackageName()));
+                SeekBar seek = (SeekBar) findViewById(R.id.responseSeekBar);
+                final TextView seekBarValue = (TextView) findViewById(R.id.seekbarvalue);
+
+                seek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        currentResponse = progress;
+                        // Display the current value of the seekBar ...
+                        seekBarValue.setText(String.valueOf(progress));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(final SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(final SeekBar seekBar) {
+                    }
+                });
+
+                findViewById(R.id.next_question_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // save the response
+                        // TODO make sure position is really the same thing as index
+                        int candidateIndex = getCurrentCandidateIndex();
+                        // grab resources
+                        Resources R = getResources();
+
+                        if (candidateIndex < candidatesList.size()) {
+
+                            if ((currentQuestionNo - 1) <= questionsList.size()) {
+                                saveResponse(candidatesList.get(candidateIndex).getCandidateID(), questionsList.get((currentQuestionNo - 1)).getQuestionID(), currentResponse);
+                                if (currentQuestionNo < maxQuestionNo) {
+                                    currentQuestionNo++;
+                                    if (currentQuestionNo == maxQuestionNo) {
+                                        // if we are now on the last question, change the text of the button to Next Candidate or Done
+                                        if (candidateIndex == (candidatesList.size() - 1)) {
+                                            nextQuestionButtonView.setText(R.getIdentifier("done_button", "string", getPackageName()));
+                                        } else {
+                                            nextQuestionButtonView.setText(R.getIdentifier("next_question_button_alt", "string", getPackageName()));
+                                        }
+                                    }
+                                    onResume();
                                 } else {
-                                    nextQuestionButtonView.setText(R.getIdentifier("next_question_button_alt", "string", getPackageName()));
+                                    // increment the index for the next candidate ...
+//                            MainActivity.incrementCurrentCandidate();
+                                    incrementCurrentCandidateIndex();
+                                    // reset the Questions
+                                    currentQuestionNo = 1;
+                                    if (candidateIndex < candidatesList.size()) {
+                                        // reset label of the Next btn
+                                        nextQuestionButtonView.setText(R.getIdentifier("next_question_button", "string", getPackageName()));
+                                        onResume();
+                                    } else {
+                                        // unless we are on the last candidate
+//                                MainActivity.setCurrentCandidate(0);
+                                        setCurrentCandidateIndex(0);
+                                        Intent intent = new Intent();
+                                        intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                                        setResult(RESULT_OK, intent);
+                                        finish();
+                                    }
                                 }
                             }
-                            onResume();
                         } else {
-                            // increment the index for the next candidate ...
-//                            MainActivity.incrementCurrentCandidate();
-                            incrementCurrentCandidateIndex();
-                            // reset the Questions
-                            currentQuestionNo = 1;
-                            if (candidateIndex < candidatesList.size()) {
-                                // reset label of the Next btn
-                                nextQuestionButtonView.setText(R.getIdentifier("next_question_button", "string", getPackageName()));
-                                onResume();
-                            } else {
-                                // unless we are on the last candidate
-//                                MainActivity.setCurrentCandidate(0);
-                                setCurrentCandidateIndex(0);
-                                Intent intent = new Intent();
-                                intent.putExtra("displayTutorialAddString",displayTutorialAddString);
-                                setResult(RESULT_OK, intent);
-                                finish();
-                            }
+                            // if we've looped past the last candidate, reset the index to 0 and finish
+                            setCurrentCandidateIndex(0);
+                            Intent intent = new Intent();
+                            intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                            setResult(RESULT_OK, intent);
+                            finish();
                         }
                     }
-                } else {
-                    // if we've looped past the last candidate, reset the index to 0 and finish
-//                    MainActivity.setCurrentCandidate(0);
-                    setCurrentCandidateIndex(0);
-                    Intent intent = new Intent();
-                    intent.putExtra("displayTutorialAddString",displayTutorialAddString);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
+                });
+                findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View view) {
+                                                                            //create a new intent so we can return Candidate Data ...
+                                                                            Intent intent = new Intent();
+                                                                            intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                                                                            setResult(RESULT_CANCELED, intent);
+                                                                            finish();
+                                                                        }
+                                                                    }
+                );
             }
-        });
-//        findViewById(R.getIdentifier("cancel_button", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
-        findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                                                                public void onClick(View view) {
-                                                                    //create a new intent so we can return Candidate Data ...
-                                                                    Intent intent = new Intent();
-                                                                    intent.putExtra("displayTutorialAddString",displayTutorialAddString);
-                                                                    setResult(RESULT_CANCELED, intent);
-                                                                    finish();
-                                                                }
-                                                            }
-        );
+        }
     }
 
     private void saveResponse(long candidate_id, long question_id, int response) {
@@ -227,10 +248,10 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
         TextView maxQuestionNoView = (TextView) findViewById(R.getIdentifier("max_question_no", "id", getPackageName()));
         TextView quesitonTextView = (TextView) findViewById(R.getIdentifier("question_text", "id", getPackageName()));
 
+        String currentQuestionText = " ";
         int currResponse = 1;
         long candidateID = -1;
         long questionID = -1;
-//        int candidateIndex = MainActivity.getCurrentCandidate();
         int candidateIndex = getCurrentCandidateIndex();
 
         currQuestionNoView.setText(Integer.toString(currentQuestionNo));
@@ -244,7 +265,10 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
             candidateID = candidatesList.get(candidateIndex).getCandidateID();
 
             if (currentQuestionNo <= questionsList.size()) {
-                quesitonTextView.setText(questionsList.get((currentQuestionNo - 1)).getQuestionText());
+                currentQuestionText = questionsList.get((currentQuestionNo - 1)).getQuestionText();
+                // If the question needs a substitution for Nick Name, apply it here
+                currentQuestionText = currentQuestionText.replaceAll("%%NAME%%", candidatesList.get(candidateIndex).getCandidateNickName());
+                quesitonTextView.setText(currentQuestionText);
                 questionID = questionsList.get((currentQuestionNo - 1)).getQuestionID();
             }
 
@@ -253,9 +277,8 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                 EvaluationOperations evaluationOperations = new EvaluationOperations(this);
                 evaluationOperations.open();
 
-                if(getShowTutorial_Eval()) {
+                if (getShowTutorial_Eval()) {
                     displayHint();
-//                    MainActivity.displayTutorialEval = false;
                     displayTutorialAddString = "false";
                 }
 
@@ -268,17 +291,15 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                 }
             }
         } else {
-//            MainActivity.setCurrentCandidate(0);
             setCurrentCandidateIndex(0);
 
-
             // if there aren't any candidates, then display a dialog to that effect and get out
-            if(candidatesList.size() < 1 ) {
+            if (candidatesList.size() < 1) {
                 showNoCandidatesDialog();
             } else {
                 Intent intent = new Intent();
 
-                intent.putExtra("displayTutorialAddString",displayTutorialAddString);
+                intent.putExtra("displayTutorialAddString", displayTutorialAddString);
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -288,9 +309,12 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
     private boolean getShowTutorial_Eval() {
         // returns value for whether to show tutorial for Main screen or not
         Boolean returnBool = false;
-        SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);;
+        SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        ;
         Boolean showTutorial = settings.getBoolean("pref_sync", true);
-        if(showTutorial & Boolean.parseBoolean(displayTutorialAddString)) { returnBool = true; }
+        if (showTutorial & Boolean.parseBoolean(displayTutorialAddString)) {
+            returnBool = true;
+        }
         return returnBool;
     }
 
@@ -300,7 +324,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
 
     void kill_activity() {
         Intent intent = new Intent();
-        intent.putExtra("displayTutorialAddString",displayTutorialAddString);
+        intent.putExtra("displayTutorialAddString", displayTutorialAddString);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -365,8 +389,8 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
         // grab resources
 //        Resources R = getResources();
         // locate the target for the hint
-            ViewTarget target = new ViewTarget(R.id.responseSeekBar, this) {
-                @Override
+        ViewTarget target = new ViewTarget(R.id.responseSeekBar, this) {
+            @Override
             public Point getPoint() {
                 return Utilities.getPointTarget(findViewById(R.id.responseSeekBar), 6);
 
@@ -428,6 +452,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
         lps.setMargins(margin, margin, margin, margin);
         return lps;
     }
+
     /**
      * Record a screen view hit for the this activity
      */
