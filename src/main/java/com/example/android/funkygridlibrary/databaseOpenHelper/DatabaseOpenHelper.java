@@ -42,6 +42,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String CANDIDATES = "Candidates";
     public static final String CANDIDATE_ID = "_id";
     public static final String CANDIDATE_NAME = "_name";
+    public static final String CANDIDATE_NICKNAME = "_nickname";
     public static final String CANDIDATE_NOTES = "_notes";
     public static final String CANDIDATE_COLOR = "_color";
     public static final String CANDIDATE_INITIALS = "_initials";
@@ -77,6 +78,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + CANDIDATES + " (" +
                     CANDIDATE_ID  + " integer primary key autoincrement, " +
                     CANDIDATE_NAME + " TEXT NOT NULL, " +
+                    CANDIDATE_NICKNAME + " TEXT NOT NULL, " +
                     CANDIDATE_NOTES + " TEXT, " +
                     CANDIDATE_COLOR + " TEXT NOT NULL, " +
                     CANDIDATE_INITIALS + " TEXT NOT NULL );";

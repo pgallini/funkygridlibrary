@@ -62,12 +62,16 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         // get the data on the candidate being updated ...
         candidateID = Integer.parseInt(getIntent().getStringExtra("candidateId"));
         String candidateName = getIntent().getStringExtra("candidateName");
+        String candidateNickName = getIntent().getStringExtra("candidateNickName");
         String candidateNote = getIntent().getStringExtra("candidateNote");
         String candidateInitialsIncoming = getIntent().getStringExtra("candidateInitials");
         String candidateColor = getIntent().getStringExtra("candidateColor");
 
         TextView candidateNameTV = (TextView) findViewById( R.id.EditTextName );
         candidateNameTV.setText(candidateName);
+
+        TextView candidateNickNameTV = (TextView) findViewById( R.id.EditTextNickName );
+        candidateNickNameTV.setText(candidateNickName);
 
         TextView candidateNotesTV = (TextView) findViewById( R.id.NotesText );
         candidateNotesTV.setText(candidateNote);
@@ -194,6 +198,8 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         // find the ListView so we can work with it ...
         EditText Nametext = (EditText) findViewById( R.id.EditTextName);
         String canidateName = Nametext.getText().toString();
+        EditText NickNametext = (EditText) findViewById( R.id.EditTextNickName );
+        String canidateNickName = NickNametext.getText().toString();
         EditText Notestext = (EditText) findViewById( R.id.NotesText);
         String candidateNotes = Notestext.getText().toString();
 
@@ -204,6 +210,7 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
 
         intent.putExtra("returnKey",Long.toString(candidateID));
         intent.putExtra("returnName",canidateName);
+        intent.putExtra("returnNickName",canidateNickName);
         intent.putExtra("returnNotes",candidateNotes);
         intent.putExtra("returnColor",currentColor);
         intent.putExtra("returnInitials",candidateInitials);

@@ -19,6 +19,7 @@ import java.util.Scanner;
  */
 public class Candidates {
     private String candidateName = " ";
+    private String candidateNickName = " ";
     private String candidateNotes = " ";
     private int xCoordinate = 0;
     private int yCoordinate = 0;
@@ -49,7 +50,6 @@ public class Candidates {
         }
         return tmpResponse;
     }
-
 
     public Candidates() {
         super();
@@ -96,6 +96,10 @@ public class Candidates {
     public String getCandidateName() {
         return candidateName;
     }
+
+    public String getCandidateNickName() { return candidateNickName; }
+
+    public void setCandidateNickName(String candidateNickName) { this.candidateNickName = candidateNickName; }
 
     public void setCandidateNotes( String notes ) { candidateNotes = notes; };
 

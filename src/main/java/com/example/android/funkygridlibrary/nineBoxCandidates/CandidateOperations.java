@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class CandidateOperations {
         // Database fields
         private DatabaseOpenHelper dbHelper;
-        private String[] CANDIDATE_TABLE_COLUMNS = {DatabaseOpenHelper.CANDIDATE_ID, DatabaseOpenHelper.CANDIDATE_NAME, DatabaseOpenHelper.CANDIDATE_NOTES, DatabaseOpenHelper.CANDIDATE_COLOR, DatabaseOpenHelper.CANDIDATE_INITIALS };
+        private String[] CANDIDATE_TABLE_COLUMNS = {DatabaseOpenHelper.CANDIDATE_ID, DatabaseOpenHelper.CANDIDATE_NAME, DatabaseOpenHelper.CANDIDATE_NICKNAME, DatabaseOpenHelper.CANDIDATE_NOTES, DatabaseOpenHelper.CANDIDATE_COLOR, DatabaseOpenHelper.CANDIDATE_INITIALS };
         private SQLiteDatabase database;
 
         public CandidateOperations(Context context) {
@@ -34,9 +34,10 @@ public class CandidateOperations {
             dbHelper.close();
         }
 
-        public Candidates addCandidate(String name, String notes, String CandidateColor, String CandidateInitials) {
+        public Candidates addCandidate(String name, String nickname, String notes, String CandidateColor, String CandidateInitials) {
             ContentValues values = new ContentValues();
             values.put(DatabaseOpenHelper.CANDIDATE_NAME, name);
+            values.put(DatabaseOpenHelper.CANDIDATE_NICKNAME, nickname );
             values.put(DatabaseOpenHelper.CANDIDATE_NOTES, notes);
             values.put(DatabaseOpenHelper.CANDIDATE_COLOR, CandidateColor);
             values.put(DatabaseOpenHelper.CANDIDATE_INITIALS,CandidateInitials );
@@ -44,7 +45,7 @@ public class CandidateOperations {
             // now that the candidate is created return it ...
             Cursor cursor = database.query(DatabaseOpenHelper.CANDIDATES,
                     CANDIDATE_TABLE_COLUMNS, DatabaseOpenHelper.CANDIDATE_ID + " = "
-                            + candId, null, null, null, null);
+                            + candId, null, null, null, null, null);
 
             cursor.moveToFirst();
 
@@ -56,9 +57,10 @@ public class CandidateOperations {
             return newComment;
         }
 
-    public boolean updateCandidate(long candidateID, String name, String notes, String CandidateColor, String CandidateInitials) {
+    public boolean updateCandidate(long candidateID, String name, String nickname, String notes, String CandidateColor, String CandidateInitials) {
         ContentValues values = new ContentValues();
         values.put(DatabaseOpenHelper.CANDIDATE_NAME, name);
+        values.put(DatabaseOpenHelper.CANDIDATE_NICKNAME, nickname );
         values.put(DatabaseOpenHelper.CANDIDATE_NOTES, notes);
         values.put(DatabaseOpenHelper.CANDIDATE_COLOR, CandidateColor);
         values.put(DatabaseOpenHelper.CANDIDATE_INITIALS,CandidateInitials );
@@ -82,7 +84,7 @@ public class CandidateOperations {
         public ArrayList<Candidates> getAllCandidates() {
             ArrayList<Candidates> candidates = new ArrayList();
             Cursor cursor = database.query(DatabaseOpenHelper.CANDIDATES,
-                    CANDIDATE_TABLE_COLUMNS, null, null, null, null, null);
+                    CANDIDATE_TABLE_COLUMNS, null, null, null, null, null, null);
 
             try {
                 cursor.moveToFirst();
@@ -102,9 +104,10 @@ public class CandidateOperations {
             Candidates candidate = new Candidates();
             candidate.setCandidateID((cursor.getInt(0)));
             candidate.setCandidateName(cursor.getString(1));
-            candidate.setCandidateNotes(cursor.getString(2));
-            candidate.setCandidateColor(cursor.getString(3));
-            candidate.setCandidateInitials(cursor.getString(4));
+            candidate.setCandidateNickName(cursor.getString(2));
+            candidate.setCandidateNotes(cursor.getString(3));
+            candidate.setCandidateColor(cursor.getString(4));
+            candidate.setCandidateInitials(cursor.getString(5));
             return candidate;
         }
     }

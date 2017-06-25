@@ -14,18 +14,20 @@
     <!--<color name="background_main">#4963CB</color>-->
     <!--<color name="background_main">#48bf9f</color>-->
     <!--<color name="background_main">#B18581</color>-->
-    <color name="background_main">#7F2E49</color>
+    <!--<color name="background_main">#7F2E49</color>-->
+    <color name="background_main">#095E7F</color>
+
 
     <color name="background_light">#ffffff</color>
-    <!--<color name="ColorAccent">#b5ff27</color>-->
-    <color name="ColorAccent">#CC9BB4</color>
+    <color name="ColorAccent">#095E7F</color>
+    <!--<color name="ColorAccent">#CC9BB4</color>-->
 
     <!--<color name="mutedbutton_color">#7E88C1</color>-->
     <!--<color name="mutedbutton_color">#a8aed0</color>-->
     <color name="mutedbutton_color">#997587</color>
 
-
-    <color name="background_secondary">#A5656A</color>
+    <color name="background_secondary">#095E7F</color>
+    <!--<color name="background_secondary">#A5656A</color>-->
     <color name="divider">#582D31</color>
     <color name="text_light">#ffffff</color>
     <color name="text_dark">#7F2E49</color>

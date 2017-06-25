@@ -1,7 +1,6 @@
 package com.example.android.funkygridlibrary.nineBoxQuestions;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.example.android.funkygridlibrary.R;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -26,17 +26,17 @@ public class QuestionsEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // grab resources
-        Resources R = getResources();
-        setContentView(R.getIdentifier("questions_entry", "id", getPackageName()));
+//        Resources R = getResources();
+        setContentView(R.layout.questions_entry);
 
-//        final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.id.x_axis_rb);
-//        final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.id.y_axis_rb);
+        final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.id.x_axis_rb);
+        final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.id.y_axis_rb);
 
-        final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("x_axis_rb", "id", getPackageName()));
-        final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("y_axis_rb", "id", getPackageName()));
+//        final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("x_axis_rb", "id", getPackageName()));
+//        final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("y_axis_rb", "id", getPackageName()));
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
-//        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id", getPackageName()));
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+//        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id", getPackageName()));
         setSupportActionBar(toolbar);
 
         // Obtain the shared Tracker instance.
@@ -66,15 +66,13 @@ public class QuestionsEntryActivity extends AppCompatActivity {
 
     public void saveQuestion(View view) {
         boolean errorFound = false;
-        // grab resources
-        Resources R = getResources();
         // find the ListView so we can work with it ...
-        EditText questionValue = (EditText) findViewById(R.getIdentifier( "EditQuestionText", "id", getPackageName()));
+        EditText questionValue = (EditText) findViewById(R.id.EditQuestionText);
         String questionText = questionValue.getText().toString();
-        EditText weightValue = (EditText) findViewById(R.getIdentifier( "WeightValue", "id", getPackageName()));
+        EditText weightValue = (EditText) findViewById(R.id.WeightValue);
         String questionWeightText = weightValue.getText().toString();
         int questionWeight = 0;
-        RadioButton x_axis_radio_button = (RadioButton) findViewById(R.getIdentifier( "x_axis_rb", "id", getPackageName()));
+        RadioButton x_axis_radio_button = (RadioButton) findViewById(R.id.x_axis_rb);
         String questionAxis = "Y";
         if( x_axis_radio_button.isChecked()) {
             questionAxis = "X";
@@ -111,15 +109,15 @@ public class QuestionsEntryActivity extends AppCompatActivity {
             finish();
         }
     }
-
     /**
      * Record a screen view hit for this activity
      */
     private void sendScreenImageName() {
         // grab resources
-        Resources R = getResources();
+//        Resources R = getResources();
         // TODO see how to diffrentiate between adding and editing a candidate
-        String name = getResources().getString(R.getIdentifier("anal_tag_questions_add", "string", getPackageName()));
+//        String name = getResources().getString(R.getIdentifier("anal_tag_questions_add", "string", getPackageName()));
+        String name = getResources().getString(R.string.anal_tag_questions_add);
 
         mTracker.setScreenName("Image~" + name);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());

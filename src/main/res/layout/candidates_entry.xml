@@ -48,13 +48,35 @@
                 </android.support.design.widget.TextInputLayout>
 
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
+                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="top|center"-->
+                    <!--android:orientation="vertical"/>-->
+
+                <LinearLayout
+                    android:id="@+id/EditTextNickName_layout"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="top|center"
-                    android:orientation="vertical"/>
+                    android:layout_below="@+id/EditTextName_layout"
+                    android:orientation="vertical">
+
+                    <android.support.design.widget.TextInputLayout
+                        style="@style/TextLabel"
+                        android:theme="@style/TextLabel">
+
+                        <EditText
+                            android:id="@+id/EditTextNickName"
+                            style="@style/EditTextStyle"
+                            android:hint="@string/edit_nickname_hint"
+                            android:inputType="textPersonName" />
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"

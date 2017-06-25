@@ -128,6 +128,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
 
                                 intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
                                 intent.putExtra("candidateName", candidatesList.get(position).getCandidateName());
+                                intent.putExtra("candidateNickName", candidatesList.get(position).getCandidateNickName());
                                 intent.putExtra("candidateNote",candidatesList.get(position).getCandidateNotes());
                                 intent.putExtra("candidateInitials", candidatesList.get(position).getCandidateInitials());
                                 intent.putExtra("candidateColor", candidatesList.get(position).getCandidateColor());
@@ -152,7 +153,9 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
 //                                startActivity(intent);
                                 // send the position of the current Candidate to Evaluation activity
                                 Intent intent = new Intent(view.getContext(), Evaluation.class);
-                                intent.putExtra("position", Long.toString(position));
+                                intent.putExtra("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
+                                intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
+
                                 startActivity(intent);
                             }
                         });
@@ -306,6 +309,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
                 returnCandidateId = Long.parseLong(returnCandidateIdString);
             };
             String returnCandidateName = (extras != null ? extras.getString("returnName") : " ");
+            String returnCandidateNickName = (extras != null ? extras.getString("returnNickName") : " ");
             String returnCandidateNotes = (extras != null ? extras.getString("returnNotes") : " ");
             String returnCandidateColor = (extras != null ? extras.getString("returnColor") : " ");
             String returnCandidateInitials = (extras != null ? extras.getString("returnInitials") : " ");
@@ -313,7 +317,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
 
             if(returnMode.equals("ADD")) {
                 // save to database
-                Candidates candidate = candidateOperations.addCandidate(returnCandidateName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);
+                Candidates candidate = candidateOperations.addCandidate(returnCandidateName, returnCandidateNickName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);
                 candidatesList.add(candidate);
                 displayList.add(candidate.getCandidateName());
                 Toast.makeText(CandidatesListActivity.this,
@@ -322,7 +326,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
 
             } else {
                 // save updated candidate to the database
-                boolean returnVal = candidateOperations.updateCandidate( returnCandidateId, returnCandidateName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);
+                boolean returnVal = candidateOperations.updateCandidate( returnCandidateId, returnCandidateName, returnCandidateNickName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);
 
                 Toast.makeText(CandidatesListActivity.this,
                                         R.string.candidate_save_message,
@@ -332,6 +336,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
                 for( int i = 0; i < candidatesList.size(); i++ ) {
                     if( candidatesList.get(i).getCandidateID() == returnCandidateId) {
                         candidatesList.get(i).setCandidateName(returnCandidateName);
+                        candidatesList.get(i).setCandidateNickName(returnCandidateNickName);
                         candidatesList.get(i).setCandidateNotes(returnCandidateNotes);
                         candidatesList.get(i).setCandidateColor(returnCandidateColor);
                         candidatesList.get(i).setCandidateInitials(returnCandidateInitials);
