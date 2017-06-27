@@ -15,6 +15,10 @@ public class Questions {
     private String questionText;
     private Integer questionWeight;
     private String questionAxis;
+    private String question_type;   // default question type to Standard
+    private String question_label_left;
+    private String question_label_mid;
+    private String question_label_right;
     private ArrayList<String> questionTextList = new ArrayList<String>();
     private ArrayList<Integer> questionWeightList = new ArrayList<Integer>();
 
@@ -45,5 +49,37 @@ public class Questions {
     public String getQuestionAxis() { return questionAxis; }
 
     public void setQuestionAxis(String questionAxis) { this.questionAxis = questionAxis; }
+
+    public String getQuestion_label_left() {
+        return question_label_left;
+    }
+
+    public void setQuestion_label_left(String question_label_left) {
+        this.question_label_left = question_label_left;
+    }
+
+    public String getQuestion_type() {
+        return question_type;
+    }
+
+    public void setQuestion_type(String question_type) {
+        this.question_type = question_type;
+    }
+
+    public String getQuestion_label_mid() {
+        return question_label_mid;
+    }
+
+    public void setQuestion_label_mid(String question_label_mid) {
+        this.question_label_mid = question_label_mid;
+    }
+
+    public String getQuestion_label_right() {
+        return question_label_right;
+    }
+
+    public void setQuestion_label_right(String question_label_right) {
+        this.question_label_right = question_label_right;
+    }
 
 }

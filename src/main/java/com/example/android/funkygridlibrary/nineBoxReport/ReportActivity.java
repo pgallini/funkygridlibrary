@@ -456,13 +456,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // Create an OnClickListener to use with Tutorial and to display the next page ...
         View.OnClickListener tutBtnListener = new View.OnClickListener() {
             public void onClick(View v) {
-                // grab resources
-//                Resources R = getResources();
                 ViewTarget target2 = new ViewTarget(R.id.save_report, ReportActivity.this) {
                     @Override
                     public Point getPoint() {
-                        // grab resources
-//                        Resources R = getResources();
                         return Utilities.getPointTarget(findViewById(R.id.save_report), 2);
                     }
                 };
@@ -476,11 +472,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // instantiate a new view for the the tutorial ...
         sv = buildTutorialView(target, R.string.showcase_rpt_message1, tutBtnListener);
         sv.setButtonPosition(lps);
-//        MainActivity.displayTutorialRpt = false;
         displayTutorialRptString = "false";
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-//        MainActivity.evalTutorialToggles(editor);
     }
 
     // TODO see if we can combine this with others
@@ -537,8 +531,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private String buildIconForEmail(Candidates currCandidate) {
-        // grab resources
-//        Resources R = getResources();
         // build icon for this candidate, save it to storage so it can be included in the e-mail
         // amnd return a handle for the image
         String currentColor = currCandidate.getCandidateColor();
@@ -635,9 +627,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     }
 
     private double get_X_ResultForCandiate(Candidates currCandidate) {
-        int currResponse = 1;
         double result = 0.0;
-        int currWeight = 0;
         long candidateID = -1;
         long questionID = -1;
 
@@ -650,14 +640,10 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 // If the Axis of the current question is not X, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("X")) {
 
-                    // grab the weight
-                    currWeight = questionsList.get(i).getQuestionWeight();
-                    // grab the response ...
-                    currResponse = evaluationOperations.getResponseValue(candidateID, questionID);
-                    if (currResponse > -1) {
-                        // add the response multiplied by the weight and add it to the result ...
-                        result = result + (currResponse * currWeight);
-                    }
+                    // TODO Remove
+                    System.out.println( " ###  X Question " );
+                    result = calcResponse( i, candidateID, questionID, result);
+
                 }
             }
         }
@@ -666,9 +652,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     }
 
     private double get_Y_ResultForCandiate(Candidates currCandidate) {
-        int currResponse = 1;
         double result = 0.0;
-        int currWeight = 0;
         long candidateID = -1;
         long questionID = -1;
 
@@ -682,20 +666,47 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             if (candidateID != -1 && questionID != -1) {
                 // If the Axis of the current question is not Y, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("Y")) {
+                    // TODO Remove
+                    System.out.println( " ###  Y Question " );
 
-                    // grab the weight
-                    currWeight = questionsList.get(i).getQuestionWeight();
-                    // grab the response ...
-                    currResponse = evaluationOperations.getResponseValue(candidateID, questionID);
-                    if (currResponse > -1) {
-                        // add the response multiplied by the weight and add it to the result ...
-                        result = result + (currResponse * currWeight);
-                    }
+                    result = calcResponse( i, candidateID, questionID, result);
                 }
             }
         }
         // divide result by 100, round to hundredth's place and return it.
         return ( ( (double)Math.round((result * 0.01) * 100d) / 100d));
+    }
+
+    private double calcResponse( int i, long candidateID, long questionID, double result) {
+        double returnResult = result;
+        int currResponse = 1;
+        int currWeight = 0;
+        String questionType = "S"; // default question type to Standard
+
+        // grab the weight
+        currWeight = questionsList.get(i).getQuestionWeight();
+        // grab the response ...
+        currResponse = evaluationOperations.getResponseValue(candidateID, questionID);
+        //  grab the quesiton type S = Standard, I = Inverse
+        questionType = questionsList.get(i).getQuestion_type();
+        if (currResponse > -1) {
+            // add the response multiplied by the weight and add it to the result ...
+            // if Standard ...
+            if (questionType.trim().equals("S")) {
+                System.out.println( "  Inside questionType == S");
+
+                returnResult = result + (currResponse * currWeight);
+            } else {   // else must be Inverse, so subtract from 10
+                returnResult = result + ((10 - currResponse) * currWeight);
+            }
+            // TODO Remove
+            System.out.println( "  --- result       = " + result);
+            System.out.println( "  --- currWeight   = " + currWeight);
+            System.out.println( "  --- currResponse = " + currResponse);
+            System.out.println( "  --- questionType = " + questionType + "***");
+            System.out.println( "  -> returnResult  = " + returnResult);
+        }
+        return returnResult;
     }
 
     /**
@@ -1046,8 +1057,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     // TODO find way to centralize this.  Can't simply add it to Utilites (can't call non-static method from static context)
     private void showFeatureNotAvailableDialog(final Context context) {
-        // grab resources
-//        Resources R = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(ReportActivity.this);
         builder.setIcon(R.drawable.ic_bih_icon);
         builder.setTitle(getString(R.string.feature_not_available_title));

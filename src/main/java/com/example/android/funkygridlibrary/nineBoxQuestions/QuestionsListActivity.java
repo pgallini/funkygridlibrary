@@ -45,9 +45,6 @@ public class QuestionsListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // grab resources
-//        Resources R = getResources();
-//        setContentView(R.getIdentifier("questions_list", "id", getPackageName()));
         setContentView(R.layout.questions_list);
 
         // set-up questions ...
@@ -59,7 +56,6 @@ public class QuestionsListActivity extends AppCompatActivity {
         displayList = buildDisplayList(questionsList);
 
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
-//        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id",  getPackageName()));
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
         setSupportActionBar(toolbar);
@@ -72,59 +68,43 @@ public class QuestionsListActivity extends AppCompatActivity {
 
         // find the ListView so we can work with it ...
         mainListView = (ListView) findViewById(R.id.questions_list);
-//        mainListView = (ListView) findViewById(R.getIdentifier("questions_list", "id", getPackageName()));
 
         mainArrayAdapter = new ArrayAdapter<String>(this, R.layout.questions_list_item, R.id.question_text, displayList) {
-//        mainArrayAdapter = new ArrayAdapter<String>(this, R.getIdentifier("questions_list_item", "id", getPackageName()),
-//                    R.getIdentifier("question_text", "id", getPackageName()), displayList) {
 
             @Override
             public View getView(final int position, View convertView, ViewGroup parent) {
-                // grab resources
-//                Resources R = getResources();
                 if (convertView == null) {
-//                    convertView = getLayoutInflater().inflate(R.getIdentifier("questions_list_item", "id", getPackageName()), parent, false);
                     convertView = getLayoutInflater().inflate(R.layout.questions_list_item, parent, false);
 
                 }
-
                 View view = super.getView(position, convertView, parent);
-
                 // set the Question ID on the view
                 TextView questionId = (TextView) view.findViewById(R.id.question_id);
-//                TextView questionId = (TextView) view.findViewById(R.getIdentifier("question_id", "id", getPackageName()));
 
                 questionId.setText(Long.toString(questionsList.get(position).getQuestionID()));
 
                 // set the Question Text on the view
                 TextView questionText = (TextView) view.findViewById(R.id.question_text);
-//                TextView questionText = (TextView) view.findViewById(R.getIdentifier("question_text", "id", getPackageName()));
 
                 Resources res = getResources();
                 int subLength = res.getInteger( R.integer.questionTextSubLegth);
-                // TODO - not sure if integer is the correct second param here
-//                int subLength = res.getInteger( R.getIdentifier("questionTextSubLegth", "integer", getPackageName()));
-
 
                 questionText.setText(questionsList.get(position).getQuestionText(subLength));
 
                 // set the Question Weight on the view
                 TextView questionWeight = (TextView) view.findViewById(R.id.question_weight);
-//                TextView questionWeight = (TextView) view.findViewById(R.getIdentifier("question_weight", "id", getPackageName()));
 
                 questionWeight.setText(Long.toString(questionsList.get(position).getQuestionWeight()) + "%");
 
                 // set the Question Axis on the view
                 TextView questionAxis = (TextView) view.findViewById(R.id.question_axis);
-//                TextView questionAxis = (TextView) view.findViewById(R.getIdentifier("question_axis", "id", getPackageName()));
 
                 questionAxis.setText(questionsList.get(position).getQuestionAxis() + " Axis");
 
+                // TODO - expand to include labels
                 // Because the list item contains multiple touch targets, you should not override
                 // onListItemClick. Instead, set a click listener for each target individually.
                 convertView.findViewById(R.id.primary_target).setOnClickListener(
-//                convertView.findViewById(R.getIdentifier("primary_target", "id", getPackageName())).setOnClickListener(
-
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
