@@ -19,7 +19,8 @@ public class QuestionsOperations {
 
     // Database fields
         private DatabaseOpenHelper dbHelper;
-        private String[] QUESTIONS_TABLE_COLUMNS = {DatabaseOpenHelper.QUESTIONS_ID, DatabaseOpenHelper.QUESTIONS_TEXT, DatabaseOpenHelper.QUESTIONS_WEIGHT , DatabaseOpenHelper.QUESTIONS_AXIS};
+        private String[] QUESTIONS_TABLE_COLUMNS = {DatabaseOpenHelper.QUESTIONS_ID, DatabaseOpenHelper.QUESTIONS_TEXT,
+                DatabaseOpenHelper.QUESTIONS_WEIGHT , DatabaseOpenHelper.QUESTIONS_AXIS, DatabaseOpenHelper.QUESTIONS_TYPE, DatabaseOpenHelper.QUESTIONS_LABEL_LEFT, DatabaseOpenHelper.QUESTIONS_LABEL_MID, DatabaseOpenHelper.QUESTIONS_LABEL_RIGHT};
         private SQLiteDatabase database;
 
         public QuestionsOperations(Context context) {
@@ -114,6 +115,10 @@ public class QuestionsOperations {
             question.setQuestionText(cursor.getString(1));
             question.setQuestionWeight(cursor.getInt(2));
             question.setQuestionAxis(cursor.getString(3));
+            question.setQuestion_type(cursor.getString(4));
+            question.setQuestion_label_left(cursor.getString(5));
+            question.setQuestion_label_mid(cursor.getString(6));
+            question.setQuestion_label_right(cursor.getString(7));
             return question;
         }
     }

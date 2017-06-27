@@ -242,11 +242,18 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
     public void onResume() {
         super.onResume();
         // grab resources
-        Resources R = getResources();
-        TextView displayName = (TextView) findViewById(R.getIdentifier("evalCandidateName", "id", getPackageName()));
-        TextView currQuestionNoView = (TextView) findViewById(R.getIdentifier("curr_question_no", "id", getPackageName()));
-        TextView maxQuestionNoView = (TextView) findViewById(R.getIdentifier("max_question_no", "id", getPackageName()));
-        TextView quesitonTextView = (TextView) findViewById(R.getIdentifier("question_text", "id", getPackageName()));
+//        Resources R = getResources();
+//        TextView displayName = (TextView) findViewById(R.getIdentifier("evalCandidateName", "id", getPackageName()));
+//        TextView currQuestionNoView = (TextView) findViewById(R.getIdentifier("curr_question_no", "id", getPackageName()));
+//        TextView maxQuestionNoView = (TextView) findViewById(R.getIdentifier("max_question_no", "id", getPackageName()));
+//        TextView quesitonTextView = (TextView) findViewById(R.getIdentifier("question_text", "id", getPackageName()));
+        TextView displayName = (TextView) findViewById(R.id.evalCandidateName);
+        TextView currQuestionNoView = (TextView) findViewById(R.id.curr_question_no);
+        TextView maxQuestionNoView = (TextView) findViewById(R.id.max_question_no);
+        TextView quesitonTextView = (TextView) findViewById(R.id.question_text);
+        TextView questionLabelLeftTextView = (TextView) findViewById(R.id.question_label_left);
+        TextView questionLabelMidTextView = (TextView) findViewById(R.id.question_label_mid);
+        TextView questionLabelRightTextView = (TextView) findViewById(R.id.question_label_right);
 
         String currentQuestionText = " ";
         int currResponse = 1;
@@ -270,6 +277,9 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                 currentQuestionText = currentQuestionText.replaceAll("%%NAME%%", candidatesList.get(candidateIndex).getCandidateNickName());
                 quesitonTextView.setText(currentQuestionText);
                 questionID = questionsList.get((currentQuestionNo - 1)).getQuestionID();
+                questionLabelLeftTextView.setText(questionsList.get((currentQuestionNo - 1)).getQuestion_label_left());
+                questionLabelMidTextView.setText(questionsList.get((currentQuestionNo - 1)).getQuestion_label_mid());
+                questionLabelRightTextView.setText(questionsList.get((currentQuestionNo - 1)).getQuestion_label_right());
             }
 
             // See if there is already a response for this combo of candidate and question ..
@@ -286,7 +296,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                 if (foundRespID != -1) {
                     // if there is a response in the DB, then set the seekbar to that value ...
                     currResponse = evaluationOperations.getResponseValue(candidateID, questionID);
-                    SeekBar seek = (SeekBar) findViewById(R.getIdentifier("responseSeekBar", "id", getPackageName()));
+                    SeekBar seek = (SeekBar) findViewById(R.id.responseSeekBar);
                     seek.setProgress(currResponse);
                 }
             }

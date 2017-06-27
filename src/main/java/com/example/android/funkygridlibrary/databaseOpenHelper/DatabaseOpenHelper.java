@@ -36,6 +36,8 @@ import java.util.ArrayList;
  * cd /data/data/com.promogird.funkynetsoftware.pro/databases
  * sqlite3 promogrid.db
  *
+ * Good explaination of when onCreate and onUpgrade get called:
+ *     https://stackoverflow.com/questions/21881992/when-is-sqliteopenhelper-oncreate-onupgrade-run
  */
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
@@ -52,6 +54,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String QUESTIONS_TEXT = "_text";
     public static final String QUESTIONS_WEIGHT = "_weight";
     public static final String QUESTIONS_AXIS = "_axis";
+    public static final String QUESTIONS_TYPE = "_type";
+    public static final String QUESTIONS_LABEL_LEFT = "_label_left";
+    public static final String QUESTIONS_LABEL_MID = "_label_mid";
+    public static final String QUESTIONS_LABEL_RIGHT = "_label_right";
 
 
     public static final String RESPONSES = "Responses";
@@ -72,7 +78,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public static final String USER_NAME = "_name";
     public static final String USER_EMAIL = "_email";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "promogrid.db";
     private static final String CANDIDATES_TABLE_CREATE =
             "CREATE TABLE " + CANDIDATES + " (" +
@@ -88,7 +94,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     QUESTIONS_ID  + " integer primary key autoincrement, " +
                     QUESTIONS_TEXT + " TEXT NOT NULL, " +
                     QUESTIONS_WEIGHT + " integer," +
-                    QUESTIONS_AXIS + " TEXT NOT NULL);";
+                    QUESTIONS_AXIS + " TEXT NOT NULL," +
+                    QUESTIONS_TYPE + " TEXT," +
+                    QUESTIONS_LABEL_LEFT + " TEXT," +
+                    QUESTIONS_LABEL_MID + " TEXT," +
+                    QUESTIONS_LABEL_RIGHT + " TEXT" + ");";
 
     private static final String RESPONSES_TABLE_CREATE =
             "CREATE TABLE " + RESPONSES + " (" +
@@ -136,6 +146,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // you should do some logging in here
         // ..
+        // TODO Code data migration when new columns are added - so data is not lost for existing users (Promo Grid)
         db.execSQL("DROP TABLE IF EXISTS " + CANDIDATES);
         db.execSQL("DROP TABLE IF EXISTS " + QUESTIONS);
         db.execSQL("DROP TABLE IF EXISTS " + RESPONSES);
@@ -156,7 +167,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             final boolean state = db.update(COLORS, values, COLOR_NUMBER + " = " + "'"+ color + "'", null)>0;
             db.setTransactionSuccessful();
 
-//            return state;
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -184,8 +194,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         //Open xml file
         XmlResourceParser _xml = res.getXml(R.xml.colors_data);
-        // TODO not sure about these params
-//        XmlResourceParser _xml = res.getXml(res.getIdentifier( "xml.colors_data", "value", getDatabaseName()));
 
         try
         {
@@ -237,8 +245,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         //Open xml file
         XmlResourceParser _xml = res.getXml(R.xml.questions_data);
-        // TODO not sure about these params
-//        XmlResourceParser _xml = res.getXml(res.getIdentifier( "xml.questions_data", "value", getDatabaseName()));
         try
         {
             //Check for end of document
@@ -251,10 +257,18 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     String _Questions_Text = _xml.getAttributeValue(null, "question_text");
                     String _Questions_Weight = _xml.getAttributeValue(null, "question_weight");
                     String _Questions_Axis = _xml.getAttributeValue(null, "question_axis");
+                    String _Questions_Type = _xml.getAttributeValue(null, "question_type");
+                    String _Questions_Label_Left = _xml.getAttributeValue(null, "question_label_left");
+                    String _Questions_Label_Mid = _xml.getAttributeValue(null, "question_label_mid");
+                    String _Questions_Label_Right = _xml.getAttributeValue(null, "question_label_right");
                     _Values.put(QUESTIONS_ID, _Questions_Id);
                     _Values.put(QUESTIONS_TEXT, _Questions_Text);
                     _Values.put(QUESTIONS_WEIGHT, _Questions_Weight);
                     _Values.put(QUESTIONS_AXIS, _Questions_Axis);
+                    _Values.put(QUESTIONS_TYPE, _Questions_Type);
+                    _Values.put(QUESTIONS_LABEL_LEFT, _Questions_Label_Left);
+                    _Values.put(QUESTIONS_LABEL_MID, _Questions_Label_Mid);
+                    _Values.put(QUESTIONS_LABEL_RIGHT, _Questions_Label_Right);
                     db.insert(QUESTIONS, null, _Values);
 
                 }
