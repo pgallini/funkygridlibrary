@@ -119,7 +119,8 @@
     <!--<item name="android:textColor">@color/ColorPrimaryDark</item>-->
     <!--</style>-->
 
-    <style name="TextLabel" parent="TextAppearance.AppCompat">
+    <!--<style name="TextLabel" parent="TextAppearance.AppCompat"></style>-->
+    <style name="TextLabel"  parent="Widget.Design.TextInputLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <!-- Hint color and label color in FALSE state -->
@@ -298,6 +299,17 @@
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:layout_margin">@dimen/margin_small</item>
         <item name="android:padding">@dimen/text_padding</item>
+    </style>
+
+    <!--Error label text style-->
+    <style name="MyErrorText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/text_light</item>
+    </style>
+
+    <!--Input field style-->
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/background_main</item>
+        <item name="colorControlActivated">@color/background_light</item>
     </style>
 
 </resources>

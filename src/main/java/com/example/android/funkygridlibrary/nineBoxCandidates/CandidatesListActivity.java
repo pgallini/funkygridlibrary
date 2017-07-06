@@ -94,7 +94,6 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
         if(getShowTutorial_Add()) {
             displayTutorialAdd();
             // Now that it's been displayed, lets turn it off
-//            MainActivity.displayTutorialAdd = false;
             displayTutorialAddString = "false";
         }
         mainArrayAdapter = new ArrayAdapter<String>(this, R.layout.candidates_list_item, R.id.candidate, displayList) {
@@ -324,7 +323,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
                         R.string.candidate_save_message,
                         Toast.LENGTH_LONG).show();
 
-            } else {
+            } else if( returnMode.equals("UPDATE")) {
                 // save updated candidate to the database
                 boolean returnVal = candidateOperations.updateCandidate( returnCandidateId, returnCandidateName, returnCandidateNickName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);
 
@@ -395,28 +394,23 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
      */
     private void sendScreenImageName() {
         String name = getResources().getString(R.string.anal_tag_candidates_list);
-
         mTracker.setScreenName("Image~" + name);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
-
     }
 
     @Override
     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-
     }
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
     }
 
     @Override
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
-
     }
 }

@@ -195,6 +195,7 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
     }
 
     public void saveCandidate(View view) {
+        // TODO add error handling - null name
         // find the ListView so we can work with it ...
         EditText Nametext = (EditText) findViewById( R.id.EditTextName);
         String canidateName = Nametext.getText().toString();

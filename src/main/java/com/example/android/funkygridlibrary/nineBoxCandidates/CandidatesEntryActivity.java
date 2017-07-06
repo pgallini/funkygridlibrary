@@ -3,10 +3,12 @@ package com.example.android.funkygridlibrary.nineBoxCandidates;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,24 +28,15 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-//import com.birdinhand.funkynetsoftware.R;
-//import databaseOpenHelper.DatabaseOpenHelper;
-//import common.appColor;
-
-
-
-//
-//  Note:  using icons from:  https://materialdesignicons.com/
-//     using this color for all icons:  #616161
-//
-
 public class CandidatesEntryActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Toolbar toolbar;
     private DatabaseOpenHelper dbHelper;
     private String currentColor;
     private String candidateInitials = " ";
     public ArrayList<appColor> colorList;
+    private EditText editTextName;
+    private TextInputLayout editTextNameLayout;
+
     // Spinner element
     Spinner spinner;
     private Tracker mTracker;  // used for Google Analytics
@@ -65,6 +58,11 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
 
         List<String> labels = getColorLabels(colorList);
 
+        // setting this up to help support display of error when Name is empty
+        editTextNameLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
+        editTextName = (EditText) findViewById(R.id.EditTextName);
+        editTextName.addTextChangedListener(new MyTextWatcher(editTextName));
+
         ImageView currentIcon = (ImageView) findViewById(R.id.current_icon);
         currentColor = getNetAvailableColor( colorList );
         currentIcon.setImageDrawable(Candidates.get_icon(getApplicationContext(), currentColor, candidateInitials));
@@ -78,8 +76,7 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         findViewById(R.id.EditTextName).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                // TODO add
-                // setCandidateNickName();
+                setCandidateNickName();
                 setCandidateIcon();
             }
         });
@@ -110,6 +107,51 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         );
     }
 
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+
+        private MyTextWatcher(View view) {
+            this.view = view;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+
+            // verify that Name is not empty
+            // TODO move this to it's own method
+            EditText Nametext = (EditText) findViewById( R.id.EditTextName );
+            String canidateName = Nametext.getText().toString();
+
+            if( canidateName.isEmpty() ){
+                editTextNameLayout.setError("Name cannot be empty!");
+                requestFocus(Nametext);
+            }
+//            switch (view.getId()) {
+//                case R.id.EditTextName:
+////                    validateName();
+//                    break;
+//                case R.id.input_email:
+//                    validateEmail();
+//                    break;
+//                case R.id.input_password:
+//                    validatePassword();
+//                    break;
+            }
+        }
+
+
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+
     private void setCandidateIcon() {
         TextView candidateNameTV = (TextView) findViewById( R.id.EditTextName );
         String candidateName = candidateNameTV.getText().toString();
@@ -117,6 +159,24 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         ImageView currentIcon = (ImageView) findViewById(R.id.current_icon);
         currentColor = getNetAvailableColor(colorList);
         currentIcon.setImageDrawable(Candidates.get_icon(getApplicationContext(), currentColor, candidateInitials));
+    }
+
+    private void setCandidateNickName() {
+        TextView candidateNameTV = (TextView) findViewById(R.id.EditTextName);
+        String candidateName = candidateNameTV.getText().toString();
+        TextView currenNickNameTV = (TextView) findViewById(R.id.EditTextNickName);
+        String currentNick = currenNickNameTV.getText().toString().trim();
+        String nickName = " ";
+        int firstSpace = candidateName.indexOf(" ");
+
+        if( currentNick.length() == 0 ) {
+            if (firstSpace != -1) {
+                nickName = candidateName.substring(0, firstSpace);
+            } else {
+                nickName = candidateName;
+            }
+            currenNickNameTV.setText(nickName);
+        }
     }
 
     public List<String> getColorLabels(ArrayList<appColor> colorList ) {
@@ -222,7 +282,7 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         String tmpColorNum = colorList.get( pos ).getColor_number();
         currentColor = tmpColorNum;
-        int tmpcolor = Color.parseColor(currentColor);
+//        int tmpcolor = Color.parseColor(currentColor);
         // refresh current icon based on the current color for this candidate ...
         ImageView currentIcon = (ImageView) findViewById(R.id.current_icon);
         currentColor = getNetAvailableColor( colorList );
@@ -235,7 +295,10 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
     }
 
     public void saveCandidate(View view) {
+        boolean errorFound = false;
+
         // find the ListView so we can work with it ...
+        TextInputLayout inputLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
         EditText Nametext = (EditText) findViewById( R.id.EditTextName );
         String canidateName = Nametext.getText().toString();
         EditText NickNametext = (EditText) findViewById( R.id.EditTextNickName );
@@ -243,28 +306,44 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         EditText Notestext = (EditText) findViewById( R.id.NotesText);
         String candidateNotes = Notestext.getText().toString();
 
+        if( canidateName.isEmpty() ){
+
+            inputLayout.setError("Name cannot be empty!"); // show error
+            // prevents the old school pop-up ...
+            Nametext.setError(null);
+
+            errorFound = true;
+        }
         // if the initials have yet to be set, set them now
         if(candidateInitials.trim().length() == 0 ) {
             setCandidateIcon();
         }
-
-        String returnKeyValue = "0";
         // save to database
         //create a new intent so we can return Candidate Data ...
         Intent intent = new Intent();
-        //add "returnKey" as a key and assign it the value in the textbox...
-        intent.putExtra("returnKey",returnKeyValue);
-        intent.putExtra("returnName",canidateName);
-        intent.putExtra("returnNickName",canidateNickName);
-        intent.putExtra("returnNotes",candidateNotes);
-        intent.putExtra("returnColor",currentColor);
-        intent.putExtra("returnInitials",candidateInitials);
-        intent.putExtra("returnMode","ADD");
-        //get ready to send the result back to the caller (MainActivity)
-        //and put our intent into it (RESULT_OK will tell the caller that
-        //we have successfully accomplished our task..
-        setResult(RESULT_OK,intent);
-        finish();
+        if( !errorFound ) {
+            String returnKeyValue = "0";
+
+            //add "returnKey" as a key and assign it the value in the textbox...
+            intent.putExtra("returnKey", returnKeyValue);
+            intent.putExtra("returnName", canidateName);
+            intent.putExtra("returnNickName", canidateNickName);
+            intent.putExtra("returnNotes", candidateNotes);
+            intent.putExtra("returnColor", currentColor);
+            intent.putExtra("returnInitials", candidateInitials);
+            intent.putExtra("returnMode", "ADD");
+            //get ready to send the result back to the caller (MainActivity)
+            //and put our intent into it (RESULT_OK will tell the caller that
+            //we have successfully accomplished our task..
+            setResult(RESULT_OK, intent);
+            finish();
+
+        } else {
+            // TODO - decide if this clause is even needed
+            intent.putExtra("returnName", "");
+            intent.putExtra("returnMode", "CANCEL");
+            setResult(RESULT_CANCELED, intent);
+        }
     }
 
     /**
