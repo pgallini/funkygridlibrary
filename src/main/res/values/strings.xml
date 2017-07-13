@@ -56,6 +56,7 @@
     <string name="confirm_delete_message">Are you sure you want to delete this person?</string>
     <string name="candidate_save_message">Person has been successfully saved.</string>
     <string name="candidate_delete_message">Person has been successfully deleted.</string>
+    <string name="name_missing_error">Name cannot be empty!</string>
     <!-- Strings to support the Evaluation activity-->
     <string name="evaluation_for_prompt">Evaluating:</string>
     <string name="question_x_of_x_prompt">Question:   </string>

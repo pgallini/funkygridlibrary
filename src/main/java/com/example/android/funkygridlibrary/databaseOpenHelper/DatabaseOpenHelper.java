@@ -23,11 +23,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-//import com.example.android.funkygridlibrary.R;
-//import com.birdinhand.funkynetsoftware.R;
-//import nineBoxMain.User;
-//import common.appColor;
-;
 
 /**
  * Steps to access database from terminal ..

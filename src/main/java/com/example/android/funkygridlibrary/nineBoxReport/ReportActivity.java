@@ -65,22 +65,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-//import com.birdinhand.funkynetsoftware.BuildConfig;
-//import com.birdinhand.funkynetsoftware.R;
-
-//import drawables.drawPoint;
-//import nineBoxCandidates.CandidateOperations;
-//import nineBoxCandidates.Candidates;
-//import nineBoxEvaluation.EvaluationOperations;
-//import nineBoxMain.MainActivity;
-//import nineBoxQuestions.Questions;
-//import nineBoxQuestions.QuestionsOperations;
-
-//import common.Utilities;
-
-//import android.support.v7.appcompat.BuildConfig;
-//import emailUtility.SendHTMLEmail;
-
 /**
  * Created by Paul Gallini on 5/11/16.
  *
@@ -104,21 +88,16 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // grab resources
-//        Resources R = getResources();
         Bundle extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
-//        setContentView(R.getIdentifier("report", "id", getPackageName()));
 
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-//        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id", getPackageName()));
 
         setSupportActionBar(toolbar);
         // create bitmap of the main Grid background
         Bitmap mainBackground = BitmapFactory.decodeResource(getResources(), R.drawable.grid_background);
-//        Bitmap mainBackground = BitmapFactory.decodeResource(getResources(), R.getIdentifier("grid_background", "drawable", getPackageName()));
 
         // convert the bitmap to make it mutable (otherwise, unmutable error will occur)
         Bitmap mainBackground_mb = mainBackground.copy(Bitmap.Config.ARGB_8888, true);
@@ -160,10 +139,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // if we're in landscape mode, it appears we need to subtract the height of the ActionBar (scaled)
         if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             heightAdj = (int) ((actionBarHeight * scale) + res.getDimension(R.dimen.margin_small));
-//            heightAdj = (int) ((actionBarHeight * scale) + res.getDimension(R.getIdentifier("margin_small", "dimen", getPackageName())));
 
             reportgrid_height = (int) Math.min(res.getDisplayMetrics().widthPixels, res.getDisplayMetrics().heightPixels) - heightAdj;
-            reportgrid_width = reportgrid_height;
+            reportgrid_width = reportgrid_height;  // for now, I want these to be the same, so ignore the silly warning
             widget_width = reportgrid_height / 4  ;
 
 
@@ -236,8 +214,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             // convert the String color to an int
             int tmpcolor = Color.parseColor(currentColor);
             Drawable d1 = ResourcesCompat.getDrawable(getResources(), R.drawable.empty_drawable, null);
-//            Drawable d1 = ResourcesCompat.getDrawable(getResources(), R.getIdentifier("empty_drawable", "drawable", getPackageName()), null);
-
             Drawable[] emptyDrawableLayers = {d1};
 
             drawPoint currDrawPoint = new drawPoint(getApplicationContext(), emptyDrawableLayers, 6, 6, tmpcolor);
@@ -301,11 +277,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 layers[0] = layerDrawable;
             }
             currLayer++;
-        }
-        // end Loop
+        }  // end Loop
 
         // Now that we are done building the grid, add it to our View ....
-//        ImageView gridImageView = (ImageView) findViewById(R.getIdentifier("grid_background", "id", getPackageName()));
         ImageView gridImageView = (ImageView) findViewById(R.id.grid_background);
 
         layerDrawable.draw(gridCanvas);
@@ -324,7 +298,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         if( getShowTutorial_Rpt()) {
             displayTutorialRpt();
             // Now that it's been displayed, lets turn it off
-//            MainActivity.displayTutorialRpt = false;
             displayTutorialRptString = "false";
         }
         // convert the layerDrawable to bitmap so we can save it ...
@@ -350,7 +323,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 //        mTracker = application.getDefaultTracker();
 //        sendScreenImageName(); // send tag to Google Analytics
 
-//        findViewById(R.getIdentifier("save_report", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
         findViewById(R.id.save_report).setOnClickListener(new View.OnClickListener() {
                                                               @Override
                                                               public void onClick(View view) {
@@ -359,7 +331,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                                                           }
         );
 
-//        findViewById(R.getIdentifier("cancel_report", "id", getPackageName())).setOnClickListener(new View.OnClickListener() {
         findViewById(R.id.cancel_report).setOnClickListener(new View.OnClickListener() {
                                                                 @Override
                                                                 public void onClick(View view) {
@@ -388,7 +359,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         boolean boolResult = false;
 
         for (int i = 0; i < currPosition; i++) {
-
             currCandidate = candidatesList.get(i);
             double existing_X = get_X_ResultForCandiate(currCandidate);
             double existing_Y = get_Y_ResultForCandiate(currCandidate);
@@ -399,7 +369,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 boolResult = true;
             }
         }
-
             return boolResult;
     }
 
@@ -434,16 +403,11 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         Boolean returnBool = false;
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);;
         Boolean showTutorial = settings.getBoolean("pref_sync", true);
-//        if(showTutorial & MainActivity.displayTutorialRpt) { returnBool = true; }
         if(showTutorial & (displayTutorialRptString == "true")) { returnBool = true; }
-
-
-        return returnBool;
+            return returnBool;
     }
 
     private void displayTutorialRpt() {
-        // grab resources
-//        Resources R = getResources();
         // set-up Layout Parameters for the tutorial
         final RelativeLayout.LayoutParams lps = getLayoutParms();
         // locate the target for the hint
@@ -599,7 +563,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     }
 
     public Bitmap readBitmapFromFile(File dir, String fileName) {
-
         FileInputStream fis = null;
 
         Bitmap tmpBitMap = null;
@@ -616,7 +579,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             e.printStackTrace();
         }
         return tmpBitMap;
-
     }
 
     public Bitmap drawableToBitmap(LayerDrawable pd) {
@@ -628,22 +590,15 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     private double get_X_ResultForCandiate(Candidates currCandidate) {
         double result = 0.0;
-        long candidateID = -1;
         long questionID = -1;
-
-        candidateID = currCandidate.getCandidateID();
+        long candidateID = currCandidate.getCandidateID();
 
         for (int i = 0; i < questionsList.size(); i++) {
-
             questionID = questionsList.get(i).getQuestionID();
             if (candidateID != -1 && questionID != -1) {
                 // If the Axis of the current question is not X, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("X")) {
-
-                    // TODO Remove
-                    System.out.println( " ###  X Question " );
                     result = calcResponse( i, candidateID, questionID, result);
-
                 }
             }
         }
@@ -653,22 +608,14 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     private double get_Y_ResultForCandiate(Candidates currCandidate) {
         double result = 0.0;
-        long candidateID = -1;
         long questionID = -1;
-
-        candidateID = currCandidate.getCandidateID();
+        long candidateID = currCandidate.getCandidateID();
 
         for (int i = 0; i < questionsList.size(); i++) {
-
             questionID = questionsList.get(i).getQuestionID();
-
-
             if (candidateID != -1 && questionID != -1) {
                 // If the Axis of the current question is not Y, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("Y")) {
-                    // TODO Remove
-                    System.out.println( " ###  Y Question " );
-
                     result = calcResponse( i, candidateID, questionID, result);
                 }
             }

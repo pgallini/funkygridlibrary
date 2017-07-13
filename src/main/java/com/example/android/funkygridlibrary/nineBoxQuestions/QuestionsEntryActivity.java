@@ -12,8 +12,6 @@ import com.example.android.funkygridlibrary.R;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-;
-
 /**
  * Created by Paul Gallini on 4/9/16.
  */
@@ -25,15 +23,10 @@ public class QuestionsEntryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // grab resources
-//        Resources R = getResources();
         setContentView(R.layout.questions_entry);
 
         final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.id.x_axis_rb);
         final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.id.y_axis_rb);
-
-//        final RadioButton x_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("x_axis_rb", "id", getPackageName()));
-//        final RadioButton y_axis_radio_button = (RadioButton) findViewById(R.getIdentifier("y_axis_rb", "id", getPackageName()));
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 //        toolbar = (Toolbar) findViewById(R.getIdentifier("tool_bar", "id", getPackageName()));
@@ -113,10 +106,7 @@ public class QuestionsEntryActivity extends AppCompatActivity {
      * Record a screen view hit for this activity
      */
     private void sendScreenImageName() {
-        // grab resources
-//        Resources R = getResources();
-        // TODO see how to diffrentiate between adding and editing a candidate
-//        String name = getResources().getString(R.getIdentifier("anal_tag_questions_add", "string", getPackageName()));
+        // TODO see how to diffrentiate between adding and editing a question
         String name = getResources().getString(R.string.anal_tag_questions_add);
 
         mTracker.setScreenName("Image~" + name);

@@ -119,7 +119,8 @@
     <!--<item name="android:textColor">@color/ColorPrimaryDark</item>-->
     <!--</style>-->
 
-    <style name="TextLabel" parent="TextAppearance.AppCompat">
+    <!--<style name="TextLabel" parent="TextAppearance.AppCompat"></style>-->
+    <style name="TextLabel"  parent="Widget.Design.TextInputLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <!-- Hint color and label color in FALSE state -->
@@ -131,6 +132,21 @@
         <item name="colorAccent">@color/text_light</item>
         <item name="colorControlNormal">@color/text_light</item>
         <item name="colorControlActivated">@color/ColorAccent</item>
+    </style>
+
+    <!--Error label text style-->
+    <style name="MyErrorText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/error_text</item>
+        <item name="android:textSize">@dimen/text_size_more_small</item>
+        <item name="android:paddingLeft">@dimen/cardhead_leftmargin</item>
+        <item name="android:layout_marginLeft">@dimen/cardhead_leftmargin</item>
+        <item name="android:layout_marginRight">@dimen/cardhead_rightmargin</item>
+    </style>
+
+    <!--Input field style-->
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/background_main</item>
+        <item name="colorControlActivated">@color/background_light</item>
     </style>
 
     <style name="TextLabelDark" parent="TextAppearance.AppCompat">
