@@ -4,8 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +41,8 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
     private String candidateInitials = " ";
     private long candidateID = 0;
     public ArrayList<appColor> colorList;
+    private EditText editTextName;
+    private TextInputLayout editTextNameLayout;
     // Spinner element
     Spinner spinner;
     private Tracker mTracker;  // used for Google Analytics
@@ -57,8 +62,6 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         dbHelper = new DatabaseOpenHelper(this);
         colorList = dbHelper.getAllColors();
 
-//        List<String> labels = getColorLabels(colorList);
-
         // get the data on the candidate being updated ...
         candidateID = Integer.parseInt(getIntent().getStringExtra("candidateId"));
         String candidateName = getIntent().getStringExtra("candidateName");
@@ -66,6 +69,11 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         String candidateNote = getIntent().getStringExtra("candidateNote");
         String candidateInitialsIncoming = getIntent().getStringExtra("candidateInitials");
         String candidateColor = getIntent().getStringExtra("candidateColor");
+
+        // setting this up to help support display of error when Name is empty
+        editTextNameLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
+        editTextName = (EditText) findViewById(R.id.EditTextName);
+        editTextName.addTextChangedListener(new CandidatesUpdateActivity.MyTextWatcher(editTextName));
 
         TextView candidateNameTV = (TextView) findViewById( R.id.EditTextName );
         candidateNameTV.setText(candidateName);
@@ -194,8 +202,42 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         Toast.makeText(this, "Selections cleared.", Toast.LENGTH_SHORT).show();
     }
 
+
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+
+        private MyTextWatcher(View view) {
+            this.view = view;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+
+            // verify that Name is not empty
+            // TODO move this to it's own method
+            EditText Nametext = (EditText) findViewById(R.id.EditTextName);
+            String canidateName = Nametext.getText().toString();
+
+            if (canidateName.isEmpty()) {
+                editTextNameLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+                Nametext.setFocusableInTouchMode(true);
+                Nametext.requestFocus();
+            } else {
+                editTextNameLayout.setError(null);
+            }
+        }
+    }
     public void saveCandidate(View view) {
-        // TODO add error handling - null name
+        boolean errorFound = false;
+
+        // find the ListView so we can work with it ...
+        TextInputLayout inputLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
         // find the ListView so we can work with it ...
         EditText Nametext = (EditText) findViewById( R.id.EditTextName);
         String canidateName = Nametext.getText().toString();
@@ -204,23 +246,34 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         EditText Notestext = (EditText) findViewById( R.id.NotesText);
         String candidateNotes = Notestext.getText().toString();
 
-        // save to database
-        //create a new intent so we can return Candidate Data ...
-        Intent intent = new Intent();
-        //add "returnKey" as a key and assign it the value in the textbox...
+        if( canidateName.isEmpty() ){
+            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+            // prevents the old school pop-up ...
+            Nametext.setError(null);
+            errorFound = true;
+            Nametext.setFocusableInTouchMode(true);
+            Nametext.requestFocus();
+        }
 
-        intent.putExtra("returnKey",Long.toString(candidateID));
-        intent.putExtra("returnName",canidateName);
-        intent.putExtra("returnNickName",canidateNickName);
-        intent.putExtra("returnNotes",candidateNotes);
-        intent.putExtra("returnColor",currentColor);
-        intent.putExtra("returnInitials",candidateInitials);
-        intent.putExtra("returnMode","UPDATE");
-        //get ready to send the result back to the caller (MainActivity)
-        //and put our intent into it (RESULT_OK will tell the caller that
-        //we have successfully accomplished our task..
-        setResult(RESULT_OK,intent);
-        finish();
+        if( !errorFound ) {
+            // save to database
+            //create a new intent so we can return Candidate Data ...
+            Intent intent = new Intent();
+            //add "returnKey" as a key and assign it the value in the textbox...
+
+            intent.putExtra("returnKey",Long.toString(candidateID));
+            intent.putExtra("returnName",canidateName);
+            intent.putExtra("returnNickName",canidateNickName);
+            intent.putExtra("returnNotes",candidateNotes);
+            intent.putExtra("returnColor",currentColor);
+            intent.putExtra("returnInitials",candidateInitials);
+            intent.putExtra("returnMode","UPDATE");
+            //get ready to send the result back to the caller (MainActivity)
+            //and put our intent into it (RESULT_OK will tell the caller that
+            //we have successfully accomplished our task..
+            setResult(RESULT_OK,intent);
+            finish();
+        }
     }
     /**
      * Record a screen view hit for the this activity

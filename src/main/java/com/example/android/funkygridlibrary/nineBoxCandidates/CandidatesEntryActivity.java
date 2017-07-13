@@ -36,7 +36,6 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
     public ArrayList<appColor> colorList;
     private EditText editTextName;
     private TextInputLayout editTextNameLayout;
-
     // Spinner element
     Spinner spinner;
     private Tracker mTracker;  // used for Google Analytics
@@ -125,25 +124,18 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
 
             // verify that Name is not empty
             // TODO move this to it's own method
-            EditText Nametext = (EditText) findViewById( R.id.EditTextName );
+            EditText Nametext = (EditText) findViewById(R.id.EditTextName);
             String canidateName = Nametext.getText().toString();
 
-            if( canidateName.isEmpty() ){
-                editTextNameLayout.setError("Name cannot be empty!");
-                requestFocus(Nametext);
-            }
-//            switch (view.getId()) {
-//                case R.id.EditTextName:
-////                    validateName();
-//                    break;
-//                case R.id.input_email:
-//                    validateEmail();
-//                    break;
-//                case R.id.input_password:
-//                    validatePassword();
-//                    break;
+            if (canidateName.isEmpty()) {
+                editTextNameLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+                Nametext.setFocusableInTouchMode(true);
+                Nametext.requestFocus();
+            } else {
+                editTextNameLayout.setError(null);
             }
         }
+    }
 
 
     private void requestFocus(View view) {
@@ -307,12 +299,12 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         String candidateNotes = Notestext.getText().toString();
 
         if( canidateName.isEmpty() ){
-
-            inputLayout.setError("Name cannot be empty!"); // show error
+            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
             // prevents the old school pop-up ...
             Nametext.setError(null);
-
             errorFound = true;
+            Nametext.setFocusableInTouchMode(true);
+            Nametext.requestFocus();
         }
         // if the initials have yet to be set, set them now
         if(candidateInitials.trim().length() == 0 ) {
@@ -337,12 +329,6 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
             //we have successfully accomplished our task..
             setResult(RESULT_OK, intent);
             finish();
-
-        } else {
-            // TODO - decide if this clause is even needed
-            intent.putExtra("returnName", "");
-            intent.putExtra("returnMode", "CANCEL");
-            setResult(RESULT_CANCELED, intent);
         }
     }
 

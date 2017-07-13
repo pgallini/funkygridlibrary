@@ -41,8 +41,8 @@
                     android:id="@+id/EditTextNameLayout"
                     style="@style/TextLabel"
                     android:theme="@style/TextLabel"
-                    app.errorTextAppearance="@style/MyErrorText"
-                    app.errorEnabled="true"
+                    card_view:errorTextAppearance="@style/MyErrorText"
+                    errorEnabled="true"
                     >
                     <EditText
                         android:id="@+id/EditTextName"
