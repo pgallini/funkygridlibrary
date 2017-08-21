@@ -80,6 +80,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     private Candidates currCandidate;
     private double result_X_axis = 0;
     private double result_Y_axis = 0;
+
+
     CustomDrawableView mCustomDrawableView;
     ShowcaseView sv;   // for the showcase (tutorial) screen:
     ShowcaseView sv2;
@@ -91,7 +93,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         Bundle extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
-
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
@@ -216,6 +217,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             Drawable d1 = ResourcesCompat.getDrawable(getResources(), R.drawable.empty_drawable, null);
             Drawable[] emptyDrawableLayers = {d1};
 
+            // TODO Remove
+            System.out.println( " $$$$  currCandidate ==  " + currCandidate.getCandidateName());
+
             drawPoint currDrawPoint = new drawPoint(getApplicationContext(), emptyDrawableLayers, 6, 6, tmpcolor);
             LayerDrawable newPoint = currDrawPoint.getPoint(currCandidate.getCandidateInitials());
             Drawable tempPoint = newPoint.mutate();
@@ -228,6 +232,10 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 result_X_axis = makeSmallAdjustment( result_X_axis );
                 result_Y_axis = makeSmallAdjustment( result_Y_axis );
             }
+
+            // set the physical locations (X & Y ) for current candidate
+            candidatesList.get(i).setxPhysicalLocation( calcXphysicalLocation(result_X_axis, gridHeight, widget_width) );
+            candidatesList.get(i).setyPhysicalLocation( calcYphysicalLocation(result_Y_axis, gridHeight, widget_width, actionBarHeight) );
 
             // if API level is 23 or greater, than we can use addLayer
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -343,6 +351,53 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         );
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int X = (int) event.getX();
+        int Y = (int) event.getY();
+        int eventaction = event.getAction();
+
+        switch (eventaction) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(this, "ACTION_DOWN AT COORDS "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+                break;
+
+//            case MotionEvent.ACTION_MOVE:
+//                Toast.makeText(this, "MOVE "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case MotionEvent.ACTION_UP:
+//                Toast.makeText(this, "ACTION_UP "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+//                break;
+        }
+        return true;
+    }
+
+    private int calcXphysicalLocation(double result_X_axis, int gridHeight, int widget_width) {
+        int xPhysicalLocation = (int) ((result_X_axis / 10.0) * (double) gridHeight) + ( widget_width / 4 );
+        // TODO Remove
+        System.out.println("***   result_X_axis     = " + result_X_axis);
+        System.out.println("***   xPhysicalLocation = " + xPhysicalLocation);
+        return xPhysicalLocation;
+    }
+
+    private int calcYphysicalLocation(double result_Y_axis, int gridHeight, int widget_width, int actionBarHeight) {
+//        double tmpLocation =  gridHeight - (((result_Y_axis / 10.0)  * (double) gridHeight)  + ( widget_width / 2 ));
+        double tmpLocation =  gridHeight - (((result_Y_axis / 10.0)  * (double) gridHeight));
+
+        // add adjustment for the height of the action bar ....
+//        tmpLocation = tmpLocation + actionBarHeight + ( widget_width / 4 );
+        tmpLocation = tmpLocation + actionBarHeight;
+        int yPhysicalLocation =  (int) tmpLocation;
+
+        // TODO Remove
+        System.out.println("***   result_Y_axis     = " + result_Y_axis);
+        System.out.println("***   actionBarHeight   = " + actionBarHeight);
+        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
+        return yPhysicalLocation;
+    }
+
     double makeSmallAdjustment( double incomingResult ) {
         double adjustedResult = 0.0;
 
@@ -383,8 +438,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         super.onConfigurationChanged(newConfig);
 
         // TODO Remove
-        System.out.println( "getResources().getConfiguration().orientation = ");
-        System.out.println( getResources().getConfiguration().orientation);
+//        System.out.println( "getResources().getConfiguration().orientation = ");
+//        System.out.println( getResources().getConfiguration().orientation);
 
         // Display message if user trying to go landscape and API < 23
         checkOrientationChanged();
@@ -640,18 +695,18 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             // add the response multiplied by the weight and add it to the result ...
             // if Standard ...
             if (questionType.trim().equals("S")) {
-                System.out.println( "  Inside questionType == S");
+//                System.out.println( "  Inside questionType == S");
 
                 returnResult = result + (currResponse * currWeight);
             } else {   // else must be Inverse, so subtract from 10
                 returnResult = result + ((10 - currResponse) * currWeight);
             }
             // TODO Remove
-            System.out.println( "  --- result       = " + result);
-            System.out.println( "  --- currWeight   = " + currWeight);
-            System.out.println( "  --- currResponse = " + currResponse);
-            System.out.println( "  --- questionType = " + questionType + "***");
-            System.out.println( "  -> returnResult  = " + returnResult);
+//            System.out.println( "  --- result       = " + result);
+//            System.out.println( "  --- currWeight   = " + currWeight);
+//            System.out.println( "  --- currResponse = " + currResponse);
+//            System.out.println( "  --- questionType = " + questionType + "***");
+//            System.out.println( "  -> returnResult  = " + returnResult);
         }
         return returnResult;
     }

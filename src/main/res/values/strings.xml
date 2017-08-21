@@ -76,6 +76,11 @@
     <string name="edit_weight_hint">Enter whole number between 1 and 100</string>
     <string name="x_axis">X Axis</string>
     <string name="y_axis">Y Axis</string>
+    <string name="s_type">Standard</string>
+    <string name="i_type">Inverse</string>
+    <string name="question_missing_error">Question text cannot be empty!</string>
+    <string name="weight_missing_error">Weight cannot be empty!</string>
+    <string name="weight_range_error">Weight must be between 0 and 100!</string>
     <string name="confirm_delete_question_message">Are you sure you want to delete this question?</string>
 
     <!--String to support Report Activity-->

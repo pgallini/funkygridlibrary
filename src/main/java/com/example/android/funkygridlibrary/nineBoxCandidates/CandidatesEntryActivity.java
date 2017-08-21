@@ -28,6 +28,9 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Paul Gallini on 4/9/16.
+ */
 public class CandidatesEntryActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Toolbar toolbar;
     private DatabaseOpenHelper dbHelper;
@@ -75,8 +78,14 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         findViewById(R.id.EditTextName).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                setCandidateNickName();
-                setCandidateIcon();
+                boolean errorFound = false;
+                if(!hasFocus) {
+                    errorFound = verifyNotEmpty_Name();
+                }
+                if(!errorFound) {
+                    setCandidateNickName();
+                    setCandidateIcon();
+                }
             }
         });
 
@@ -122,18 +131,7 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
 
         public void afterTextChanged(Editable editable) {
 
-            // verify that Name is not empty
-            // TODO move this to it's own method
-            EditText Nametext = (EditText) findViewById(R.id.EditTextName);
-            String canidateName = Nametext.getText().toString();
-
-            if (canidateName.isEmpty()) {
-                editTextNameLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
-                Nametext.setFocusableInTouchMode(true);
-                Nametext.requestFocus();
-            } else {
-                editTextNameLayout.setError(null);
-            }
+            verifyNotEmpty_Name();
         }
     }
 
@@ -286,6 +284,34 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         Toast.makeText(this, "Selections cleared.", Toast.LENGTH_SHORT).show();
     }
 
+    private boolean verifyNotEmpty_Name() {
+        boolean errorFound = false;
+        TextInputLayout inputLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
+
+        final EditText Nametext = (EditText) findViewById( R.id.EditTextName );
+        String canidateName = Nametext.getText().toString();
+
+        if( canidateName.isEmpty() ){
+            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+            // prevents the old school pop-up ...
+            Nametext.setError(null);
+            errorFound = true;
+            Nametext.setFocusableInTouchMode(true);
+            // We can't simply requesFocus here - because this gets called within onFocusChanged() ... see ..
+            // https://stackoverflow.com/questions/3003062/focus-issue-with-multiple-edittexts
+            Nametext.post(new Runnable() {
+                @Override
+                public void run() {
+                    Nametext.requestFocus();
+                }
+            });
+        } else {
+            inputLayout.setError(null);
+        }
+
+        return errorFound;
+    }
+
     public void saveCandidate(View view) {
         boolean errorFound = false;
 
@@ -298,14 +324,8 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         EditText Notestext = (EditText) findViewById( R.id.NotesText);
         String candidateNotes = Notestext.getText().toString();
 
-        if( canidateName.isEmpty() ){
-            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
-            // prevents the old school pop-up ...
-            Nametext.setError(null);
-            errorFound = true;
-            Nametext.setFocusableInTouchMode(true);
-            Nametext.requestFocus();
-        }
+        errorFound = verifyNotEmpty_Name();
+
         // if the initials have yet to be set, set them now
         if(candidateInitials.trim().length() == 0 ) {
             setCandidateIcon();

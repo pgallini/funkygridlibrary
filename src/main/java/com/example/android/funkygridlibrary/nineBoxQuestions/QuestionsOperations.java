@@ -35,7 +35,7 @@ public class QuestionsOperations {
             dbHelper.close();
         }
 
-    public Questions addQuestion(String questionText, int questionWeight, boolean x_axis) {
+    public Questions addQuestion(String questionText, int questionWeight, boolean x_axis, String questionType) {
         ContentValues values = new ContentValues();
         values.put(DatabaseOpenHelper.QUESTIONS_TEXT, questionText);
         values.put(DatabaseOpenHelper.QUESTIONS_WEIGHT, questionWeight);
@@ -44,6 +44,7 @@ public class QuestionsOperations {
         } else {
             values.put(DatabaseOpenHelper.QUESTIONS_AXIS, "Y");
         }
+        values.put(DatabaseOpenHelper.QUESTIONS_TYPE, questionType);
         long quesId = database.insert(DatabaseOpenHelper.QUESTIONS, null, values);
 
         // now that the question is created return it ...
@@ -59,15 +60,16 @@ public class QuestionsOperations {
         return newQuestion;
     }
 
-        public boolean updateQuestion(long questionID, String questionText, int questionWeight, boolean x_axis) {
+        public boolean updateQuestion(long questionID, String questionText, int questionWeight, boolean x_axis, String questionType) {
             ContentValues values = new ContentValues();
-            values.put(DatabaseOpenHelper.QUESTIONS_TEXT, questionText);
+            values.put(DatabaseOpenHelper.QUESTIONS_TEXT, questionText.trim());
             values.put(DatabaseOpenHelper.QUESTIONS_WEIGHT, questionWeight);
             if(x_axis) {
                 values.put(DatabaseOpenHelper.QUESTIONS_AXIS, "X");
             } else {
                 values.put(DatabaseOpenHelper.QUESTIONS_AXIS, "Y");
             }
+            values.put(DatabaseOpenHelper.QUESTIONS_TYPE, questionType);
             long quesId = database.update(DatabaseOpenHelper.QUESTIONS, values, DatabaseOpenHelper.QUESTIONS_ID + "=" + questionID ,null);
 
             return (quesId > 0);

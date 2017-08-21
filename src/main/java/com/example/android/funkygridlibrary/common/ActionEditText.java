@@ -13,7 +13,10 @@ import android.view.inputmethod.InputConnection;
  * http://stackoverflow.com/questions/2986387/multi-line-edittext-with-done-action-button
  *
  */
-public class ActionEditText extends android.support.v7.widget.AppCompatEditText
+//   *** changing this due to error when trying to apply the proper material design type
+    // error formating to Question Entry
+//public class ActionEditText extends android.support.v7.widget.AppCompatEditText
+public class ActionEditText extends     android.support.design.widget.TextInputEditText
 
 {
     public ActionEditText(Context context)

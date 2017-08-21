@@ -23,6 +23,8 @@ public class Candidates {
     private String candidateNotes = " ";
     private int xCoordinate = 0;
     private int yCoordinate = 0;
+    private int xPhysicalLocation = 0;
+    private int yPhysicalLocation = 0;
     private long candidateID = 0;
     private String candidateColor = " ";
     private String candidateInitials = " ";
@@ -116,5 +118,14 @@ public class Candidates {
     public String getCandidateInitials() { return candidateInitials; }
 
     public void setCandidateInitials(String candidateInitials) { this.candidateInitials = candidateInitials; }
+
+
+    public int getxPhysicalLocation() {return xPhysicalLocation; }
+
+    public void setxPhysicalLocation(int xPhysicalLocation) { this.xPhysicalLocation = xPhysicalLocation; }
+
+    public int getyPhysicalLocation() { return yPhysicalLocation; }
+
+    public void setyPhysicalLocation(int yPhysicalLocation) { this.yPhysicalLocation = yPhysicalLocation; }
 
 }

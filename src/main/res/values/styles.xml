@@ -145,10 +145,11 @@
 
     <!--Input field style-->
     <style name="MyEditText" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/background_main</item>
+        <item name="colorControlNormal">@color/background_secondary</item>
         <item name="colorControlActivated">@color/background_light</item>
     </style>
 
+    <!-- consider changing parent to parent="Widget.Design.TextInputLayout"-->
     <style name="TextLabelDark" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -163,6 +164,20 @@
         <item name="colorControlActivated">@color/text_grey</item>
     </style>
 
+    <style name="TextLabelLight" parent="Widget.Design.TextInputLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">@color/text_light</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+        <item name="colorAccent">@color/text_light</item>
+        <item name="colorControlNormal">@color/text_light</item>
+        <item name="colorControlActivated">@color/text_light</item>
+        <item name="backgroundTint">@color/text_dark</item>
+        <item name="rippleColor">@color/text_dark</item>
+    </style>
+
     <style name="EditTextStyle" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -172,6 +187,35 @@
     </style>
 
     <style name="EditMultiLineTextStyle" >
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/text_light</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:lines">8</item> <!-- Total Lines prior display -->
+        <item name="android:minLines">6</item> <!-- Minimum lines -->
+        <item name="android:gravity">top|left</item> <!-- Cursor Position -->
+        <item name="android:maxLines">10</item> <!-- Maximum Lines -->
+        <item name="android:scrollbars">vertical</item> <!-- Vertical Scroll Bar -->
+    </style>
+
+
+    <style name="EditMultiLineTextStyleDark" >
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:lines">8</item> <!-- Total Lines prior display -->
+        <item name="android:minLines">6</item> <!-- Minimum lines -->
+        <item name="android:gravity">top|left</item> <!-- Cursor Position -->
+        <item name="android:maxLines">10</item> <!-- Maximum Lines -->
+        <item name="android:scrollbars">vertical</item> <!-- Vertical Scroll Bar -->
+    </style>
+
+    <style name="EditMultiLineTextStyle_question" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_size</item>
