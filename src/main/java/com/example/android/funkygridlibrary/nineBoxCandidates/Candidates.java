@@ -21,8 +21,8 @@ public class Candidates {
     private String candidateName = " ";
     private String candidateNickName = " ";
     private String candidateNotes = " ";
-    private int xCoordinate = 0;
-    private int yCoordinate = 0;
+    private double xCoordinate = 0.0;
+    private double yCoordinate = 0.0;
     private int xPhysicalLocation = 0;
     private int yPhysicalLocation = 0;
     private long candidateID = 0;
@@ -77,19 +77,19 @@ public class Candidates {
         return newPoint;
     }
 
-    public int getxCoordinate() {
+    public double getxCoordinate() {
         return xCoordinate;
     }
 
-    public void setxCoordinate(int xCoordinate) {
+    public void setxCoordinate(double xCoordinate) {
         this.xCoordinate = xCoordinate;
     }
 
-    public int getyCoordinate() {
+    public double getyCoordinate() {
         return yCoordinate;
     }
 
-    public void setyCoordinate(int yCoordinate) {
+    public void setyCoordinate(double yCoordinate) {
         this.yCoordinate = yCoordinate;
     }
 

@@ -2,11 +2,8 @@
   Copyright 2016 Paul Gallini
 
   -->
-
 <resources>
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
         <item name="colorPrimary">@color/ColorPrimary</item>
         <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
         <item name="windowActionBar">false</item>
@@ -14,7 +11,6 @@
         <item name="colorAccent">@color/text_dark</item>
         <!-- Customize your theme here. -->
         <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item>
-
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
@@ -118,6 +114,20 @@
     <!--<item name="android:textSize">@dimen/text_size_big</item>-->
     <!--<item name="android:textColor">@color/ColorPrimaryDark</item>-->
     <!--</style>-->
+
+
+    <style name="SmallButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:background">@color/ColorAccent</item>
+        <item name="android:layout_width">@dimen/button_small_width</item>
+        <item name="android:layout_height">@dimen/button_small_height</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:elevation">@dimen/global_elevation</item>"
+        <item name="android:textSize">@dimen/text_size_button_small</item>
+        <item name="android:textColor">@color/ColorPrimaryDark</item>
+    </style>
 
     <!--<style name="TextLabel" parent="TextAppearance.AppCompat"></style>-->
     <style name="TextLabel"  parent="Widget.Design.TextInputLayout">
@@ -301,6 +311,15 @@
         <item name="android:textSize">@dimen/seekbar_numbers_size</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
+    </style>
+
+
+    <style name="PopUpBoxStyle" >
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:layout_margin">@dimen/text_margin_small</item>
     </style>
 
     <style name="AppBaseTheme" parent="android:Theme.Light">
