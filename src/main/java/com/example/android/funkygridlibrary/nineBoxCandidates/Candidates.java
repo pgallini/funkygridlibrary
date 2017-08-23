@@ -21,8 +21,10 @@ public class Candidates {
     private String candidateName = " ";
     private String candidateNickName = " ";
     private String candidateNotes = " ";
-    private int xCoordinate = 0;
-    private int yCoordinate = 0;
+    private double xCoordinate = 0.0;
+    private double yCoordinate = 0.0;
+    private int xPhysicalLocation = 0;
+    private int yPhysicalLocation = 0;
     private long candidateID = 0;
     private String candidateColor = " ";
     private String candidateInitials = " ";
@@ -75,19 +77,19 @@ public class Candidates {
         return newPoint;
     }
 
-    public int getxCoordinate() {
+    public double getxCoordinate() {
         return xCoordinate;
     }
 
-    public void setxCoordinate(int xCoordinate) {
+    public void setxCoordinate(double xCoordinate) {
         this.xCoordinate = xCoordinate;
     }
 
-    public int getyCoordinate() {
+    public double getyCoordinate() {
         return yCoordinate;
     }
 
-    public void setyCoordinate(int yCoordinate) {
+    public void setyCoordinate(double yCoordinate) {
         this.yCoordinate = yCoordinate;
     }
 
@@ -116,5 +118,14 @@ public class Candidates {
     public String getCandidateInitials() { return candidateInitials; }
 
     public void setCandidateInitials(String candidateInitials) { this.candidateInitials = candidateInitials; }
+
+
+    public int getxPhysicalLocation() {return xPhysicalLocation; }
+
+    public void setxPhysicalLocation(int xPhysicalLocation) { this.xPhysicalLocation = xPhysicalLocation; }
+
+    public int getyPhysicalLocation() { return yPhysicalLocation; }
+
+    public void setyPhysicalLocation(int yPhysicalLocation) { this.yPhysicalLocation = yPhysicalLocation; }
 
 }

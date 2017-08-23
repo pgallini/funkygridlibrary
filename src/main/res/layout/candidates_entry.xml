@@ -34,7 +34,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
-
                 android:orientation="vertical">
 
                 <android.support.design.widget.TextInputLayout
@@ -42,7 +41,7 @@
                     style="@style/TextLabel"
                     android:theme="@style/TextLabel"
                     card_view:errorTextAppearance="@style/MyErrorText"
-                    errorEnabled="true"
+                    card_view:errorEnabled="true"
                     >
                     <EditText
                         android:id="@+id/EditTextName"
@@ -51,13 +50,6 @@
                         android:hint="@string/edit_candidate_hint"
                         android:inputType="textPersonName"/>
                 </android.support.design.widget.TextInputLayout>
-
-
-                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-                    <!--android:layout_zwidth="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:gravity="top|center"-->
-                    <!--android:orientation="vertical"/>-->
 
                 <LinearLayout
                     android:id="@+id/EditTextNickName_layout"
@@ -73,6 +65,7 @@
                         <EditText
                             android:id="@+id/EditTextNickName"
                             style="@style/EditTextStyle"
+                            android:theme="@style/MyEditText"
                             android:hint="@string/edit_nickname_hint"
                             android:inputType="textPersonName" />
                     </android.support.design.widget.TextInputLayout>
@@ -80,8 +73,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,7 +127,7 @@
 
                 <com.example.android.funkygridlibrary.common.ActionEditText
                     android:id="@+id/NotesText"
-                    style="@style/EditMultiLineTextStyle"
+                    style="@style/EditMultiLineTextStyleDark"
                     android:hint="@string/edit_candidate_notes_hint"></com.example.android.funkygridlibrary.common.ActionEditText>
             </android.support.design.widget.TextInputLayout>
 

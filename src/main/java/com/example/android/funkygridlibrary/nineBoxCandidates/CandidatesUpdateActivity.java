@@ -99,10 +99,16 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         findViewById(R.id.EditTextName).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                TextView candidateNameTV = (TextView) findViewById( R.id.EditTextName );
-                String candidateName = candidateNameTV.getText().toString();
-                ImageView currentIcon = (ImageView) findViewById(R.id.current_icon);
-                currentIcon.setImageDrawable(Candidates.get_icon(getApplicationContext(), currentColor, candidateInitials));
+                boolean errorFound = false;
+                if(!hasFocus) {
+                    errorFound = verifyNotEmpty_Name();
+                }
+                if(!errorFound) {
+                    TextView candidateNameTV = (TextView) findViewById(R.id.EditTextName);
+                    String candidateName = candidateNameTV.getText().toString();
+                    ImageView currentIcon = (ImageView) findViewById(R.id.current_icon);
+                    currentIcon.setImageDrawable(Candidates.get_icon(getApplicationContext(), currentColor, candidateInitials));
+                }
             }
         });
 
@@ -219,20 +225,50 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
 
         public void afterTextChanged(Editable editable) {
 
-            // verify that Name is not empty
-            // TODO move this to it's own method
-            EditText Nametext = (EditText) findViewById(R.id.EditTextName);
-            String canidateName = Nametext.getText().toString();
 
-            if (canidateName.isEmpty()) {
-                editTextNameLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
-                Nametext.setFocusableInTouchMode(true);
-                Nametext.requestFocus();
-            } else {
-                editTextNameLayout.setError(null);
-            }
+            verifyNotEmpty_Name();
+            // verify that Name is not empty
+//            EditText Nametext = (EditText) findViewById(R.id.EditTextName);
+//            String canidateName = Nametext.getText().toString();
+//
+//            if (canidateName.isEmpty()) {
+//                editTextNameLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+//                Nametext.setFocusableInTouchMode(true);
+//                Nametext.requestFocus();
+//            } else {
+//                editTextNameLayout.setError(null);
+//            }
         }
     }
+
+    private boolean verifyNotEmpty_Name() {
+        boolean errorFound = false;
+        TextInputLayout inputLayout = (TextInputLayout) findViewById(R.id.EditTextNameLayout);
+
+        final EditText Nametext = (EditText) findViewById( R.id.EditTextName );
+        String canidateName = Nametext.getText().toString();
+
+        if( canidateName.isEmpty() ){
+            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
+            // prevents the old school pop-up ...
+            Nametext.setError(null);
+            errorFound = true;
+            Nametext.setFocusableInTouchMode(true);
+            // We can't simply requesFocus here - because this gets called within onFocusChanged() ... see ..
+            // https://stackoverflow.com/questions/3003062/focus-issue-with-multiple-edittexts
+            Nametext.post(new Runnable() {
+                @Override
+                public void run() {
+                    Nametext.requestFocus();
+                }
+            });
+        } else {
+            inputLayout.setError(null);
+        }
+
+        return errorFound;
+    }
+
     public void saveCandidate(View view) {
         boolean errorFound = false;
 
@@ -246,14 +282,7 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         EditText Notestext = (EditText) findViewById( R.id.NotesText);
         String candidateNotes = Notestext.getText().toString();
 
-        if( canidateName.isEmpty() ){
-            inputLayout.setError(getResources().getString(R.string.name_missing_error)); // show error
-            // prevents the old school pop-up ...
-            Nametext.setError(null);
-            errorFound = true;
-            Nametext.setFocusableInTouchMode(true);
-            Nametext.requestFocus();
-        }
+        errorFound = verifyNotEmpty_Name();
 
         if( !errorFound ) {
             // save to database

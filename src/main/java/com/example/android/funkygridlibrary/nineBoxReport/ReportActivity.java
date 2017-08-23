@@ -2,6 +2,7 @@ package com.example.android.funkygridlibrary.nineBoxReport;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.pdf.PdfDocument;
@@ -39,8 +41,10 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.funkygridlibrary.R;
@@ -67,7 +71,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Paul Gallini on 5/11/16.
- *
+ * <p>
  * This activity drives the generation and presentation of the results grid.
  */
 public class ReportActivity extends AppCompatActivity implements OnShowcaseEventListener {
@@ -80,6 +84,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     private Candidates currCandidate;
     private double result_X_axis = 0;
     private double result_Y_axis = 0;
+
     CustomDrawableView mCustomDrawableView;
     ShowcaseView sv;   // for the showcase (tutorial) screen:
     ShowcaseView sv2;
@@ -91,7 +96,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         Bundle extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
-
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
@@ -102,7 +106,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // convert the bitmap to make it mutable (otherwise, unmutable error will occur)
         Bitmap mainBackground_mb = mainBackground.copy(Bitmap.Config.ARGB_8888, true);
         // get dimenstions from the integers file
-        Resources res =  this.getResources();
+        Resources res = this.getResources();
         float scale = res.getDisplayMetrics().density;
 
         int reportgrid_height = 0;
@@ -132,17 +136,16 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         }
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
         // if we're in landscape mode, it appears we need to subtract the height of the ActionBar (scaled)
-        if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             heightAdj = (int) ((actionBarHeight * scale) + res.getDimension(R.dimen.margin_small));
 
             reportgrid_height = (int) Math.min(res.getDisplayMetrics().widthPixels, res.getDisplayMetrics().heightPixels) - heightAdj;
             reportgrid_width = reportgrid_height;  // for now, I want these to be the same, so ignore the silly warning
-            widget_width = reportgrid_height / 4  ;
+            widget_width = reportgrid_height / 4;
 
 
         } else {
@@ -152,11 +155,10 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
                 // trying to factor-in scale because the widgets are too large on lower density devices
                 widget_width = reportgrid_height / (12 / (int) scale);
-            }
-            else {
+            } else {
                 // trying to factor-in scale because the widgets are too large on lower density devices
                 // changing widget width doesn't seem to matter for API 21 and 22
-                widget_width = reportgrid_height / 20 ;
+                widget_width = reportgrid_height / 20;
                 // for API 22 and below, we need to turn-off the ability to flip the report to portrait (the rest of the app should still flip)
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
             }
@@ -216,18 +218,27 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             Drawable d1 = ResourcesCompat.getDrawable(getResources(), R.drawable.empty_drawable, null);
             Drawable[] emptyDrawableLayers = {d1};
 
+            // TODO Remove
+            System.out.println(" $$$$  currCandidate ==  " + currCandidate.getCandidateName());
+
             drawPoint currDrawPoint = new drawPoint(getApplicationContext(), emptyDrawableLayers, 6, 6, tmpcolor);
             LayerDrawable newPoint = currDrawPoint.getPoint(currCandidate.getCandidateInitials());
             Drawable tempPoint = newPoint.mutate();
 
             result_X_axis = get_X_ResultForCandiate(currCandidate);
+            currCandidate.setxCoordinate(result_X_axis);
             result_Y_axis = get_Y_ResultForCandiate(currCandidate);
+            currCandidate.setyCoordinate(result_Y_axis);
 
-            if ( widgetsWillOverlap( result_X_axis, result_Y_axis, i, candidatesList )) {
+            if (widgetsWillOverlap(result_X_axis, result_Y_axis, i, candidatesList)) {
                 // If this icon/widget will overlap with one already drawn, then make small adjustments so both are visible
-                result_X_axis = makeSmallAdjustment( result_X_axis );
-                result_Y_axis = makeSmallAdjustment( result_Y_axis );
+                result_X_axis = makeSmallAdjustment(result_X_axis);
+                result_Y_axis = makeSmallAdjustment(result_Y_axis);
             }
+
+            // set the physical locations (X & Y ) for current candidate
+            candidatesList.get(i).setxPhysicalLocation(calcXphysicalLocation(result_X_axis, gridHeight, widget_width));
+            candidatesList.get(i).setyPhysicalLocation(calcYphysicalLocation(result_Y_axis, gridHeight, widget_width, actionBarHeight));
 
             // if API level is 23 or greater, than we can use addLayer
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -247,29 +258,29 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
                 //  the index (1) is hard-coded because we smush the layers down at the end of each iteration
                 //    params are index, left offset, top offset, right, bottom
-                int adjustedResult_X_axis = (int) Math.max( 1, result_X_axis );
-                int adjustedResult_Y_axis = (int) Math.max( 1, result_Y_axis );
+                int adjustedResult_X_axis = (int) Math.max(1, result_X_axis);
+                int adjustedResult_Y_axis = (int) Math.max(1, result_Y_axis);
 
                 // if we're in landscape mode, it appears we need to subtract the height of the ActionBar (scaled)
-                if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
                     leftBoundAddon = adjustedResult_X_axis * 6;
-                    rightBoundAddon = ( 10 - adjustedResult_X_axis) * 20;
+                    rightBoundAddon = (10 - adjustedResult_X_axis) * 20;
                     reportgrid_width_adjusted = reportgrid_width;
                     widget_width_scale_factor = 2;
-                    leftBound = (int) (reportgrid_width_adjusted - ( reportgrid_width_adjusted * (0.1 * (10 - adjustedResult_X_axis ))) - (widget_width/widget_width_scale_factor)) + leftBoundAddon;
-                    topBound =  (int) (( reportgrid_height * (0.1 * (10 - adjustedResult_Y_axis ))) - (widget_width/widget_width_scale_factor));
-                    rightBound = reportgrid_width_adjusted - (leftBound + (int) (widget_width / widget_width_scale_factor) ) + rightBoundAddon;
-                    bottomBound = reportgrid_height - ( topBound + (int) (widget_width / widget_width_scale_factor ));
+                    leftBound = (int) (reportgrid_width_adjusted - (reportgrid_width_adjusted * (0.1 * (10 - adjustedResult_X_axis))) - (widget_width / widget_width_scale_factor)) + leftBoundAddon;
+                    topBound = (int) ((reportgrid_height * (0.1 * (10 - adjustedResult_Y_axis))) - (widget_width / widget_width_scale_factor));
+                    rightBound = reportgrid_width_adjusted - (leftBound + (int) (widget_width / widget_width_scale_factor)) + rightBoundAddon;
+                    bottomBound = reportgrid_height - (topBound + (int) (widget_width / widget_width_scale_factor));
 
                     layerDrawable.setLayerInset(1, leftBound, topBound, rightBound, bottomBound);
 
                 } else {
                     widget_width_scale_factor = 32;
-                    leftBound = (int) (reportgrid_width - ( reportgrid_width * (0.1 * (10 - adjustedResult_X_axis ))) - (widget_width/widget_width_scale_factor));
-                    topBound =  (int) (( reportgrid_height * (0.1 * (10 - adjustedResult_Y_axis ))) - (widget_width/widget_width_scale_factor));
-                    rightBound = reportgrid_width - leftBound + ((int) (widget_width / widget_width_scale_factor) );
-                    bottomBound = reportgrid_height - topBound + (int) (widget_width / widget_width_scale_factor );
+                    leftBound = (int) (reportgrid_width - (reportgrid_width * (0.1 * (10 - adjustedResult_X_axis))) - (widget_width / widget_width_scale_factor));
+                    topBound = (int) ((reportgrid_height * (0.1 * (10 - adjustedResult_Y_axis))) - (widget_width / widget_width_scale_factor));
+                    rightBound = reportgrid_width - leftBound + ((int) (widget_width / widget_width_scale_factor));
+                    bottomBound = reportgrid_height - topBound + (int) (widget_width / widget_width_scale_factor);
 
                     layerDrawable.setLayerInset(1, leftBound, topBound, rightBound, bottomBound);
                 }
@@ -287,15 +298,15 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // setting layout params for the gridImageView ....
             ViewGroup.LayoutParams lp = gridImageView.getLayoutParams();
-            lp.width = gridCanvas.getWidth() ;    // 5 almost works for API 21
-            lp.height = gridCanvas.getHeight() ;
+            lp.width = gridCanvas.getWidth();    // 5 almost works for API 21
+            lp.height = gridCanvas.getHeight();
             gridImageView.requestLayout();
         }
 
         gridImageView.setImageDrawable(layerDrawable);
 
         // see if we should show the Tutorial ....
-        if( getShowTutorial_Rpt()) {
+        if (getShowTutorial_Rpt()) {
             displayTutorialRpt();
             // Now that it's been displayed, lets turn it off
             displayTutorialRptString = "false";
@@ -335,7 +346,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                                                                 @Override
                                                                 public void onClick(View view) {
                                                                     Intent intent = new Intent();
-                                                                    intent.putExtra("displayTutorialRptString",displayTutorialRptString);
+                                                                    intent.putExtra("displayTutorialRptString", displayTutorialRptString);
                                                                     setResult(RESULT_OK, intent);
                                                                     finish();
                                                                 }
@@ -343,10 +354,146 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         );
     }
 
-    double makeSmallAdjustment( double incomingResult ) {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int X = (int) event.getX();
+        int Y = (int) event.getY();
+        int eventaction = event.getAction();
+
+        switch (eventaction) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(this, "ACTION_DOWN AT COORDS " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
+                displayCandidateCard( X, Y );
+                break;
+
+//            case MotionEvent.ACTION_MOVE:
+//                Toast.makeText(this, "MOVE "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case MotionEvent.ACTION_UP:
+//                Toast.makeText(this, "ACTION_UP "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+//                break;
+        }
+        return true;
+    }
+
+    private int calcXphysicalLocation(double result_X_axis, int gridHeight, int widget_width) {
+        int xPhysicalLocation = (int) ((result_X_axis / 10.0) * (double) gridHeight) + (widget_width / 4);
+        // TODO Remove
+        System.out.println("***   result_X_axis     = " + result_X_axis);
+        System.out.println("***   xPhysicalLocation = " + xPhysicalLocation);
+        return xPhysicalLocation;
+    }
+
+    private int calcYphysicalLocation(double result_Y_axis, int gridHeight, int widget_width, int actionBarHeight) {
+//        double tmpLocation =  gridHeight - (((result_Y_axis / 10.0)  * (double) gridHeight)  + ( widget_width / 2 ));
+        double tmpLocation = gridHeight - (((result_Y_axis / 10.0) * (double) gridHeight));
+
+        // add adjustment for the height of the action bar ....
+//        tmpLocation = tmpLocation + actionBarHeight + ( widget_width / 4 );
+        tmpLocation = tmpLocation + actionBarHeight;
+        int yPhysicalLocation = (int) tmpLocation;
+
+        // TODO Remove
+        System.out.println("***   result_Y_axis     = " + result_Y_axis);
+        System.out.println("***   actionBarHeight   = " + actionBarHeight);
+        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
+        return yPhysicalLocation;
+    }
+
+    private void displayCandidateCard(int touchX, int touchY) {
+        // for the given touch point, display info on the candidate(s) with icons at that spot ....
+        int maxDispays = 4;
+        int xPhysicalLocation = 0;
+        int yPhysicalLocation = 0;
+        // grab the number of candidates ....
+        int numberOfCandidates = candidatesList.size();
+        int currentTouchRange = getTouchRange();
+
+        for (int i = 0; i < numberOfCandidates; i++) {
+
+            currCandidate = candidatesList.get(i);
+            xPhysicalLocation = currCandidate.getxPhysicalLocation();
+            yPhysicalLocation = currCandidate.getyPhysicalLocation();
+
+            // see if current Candidate is within the range of the X component of the touch ...
+            if (xPhysicalLocation > (touchX - currentTouchRange) &&
+                    xPhysicalLocation < (touchX + currentTouchRange)
+                    ) {
+
+                // see if current Candidate is within the range of the Y component of the touch ...
+                if (yPhysicalLocation > (touchY - currentTouchRange) &&
+                        yPhysicalLocation < (touchY + currentTouchRange)
+                        ) {
+                    displayPopUp( currCandidate );
+                    // TODO Remove
+                    System.out.println(" ###### We Have A Match !!!!");
+                } else {
+                    // TODO Remove
+                    System.out.println(" ###### We Have NO Match :(");
+                }
+            }
+
+        }
+    }
+
+    private void displayPopUp( final Candidates candidate ) {
+        final Dialog dialog = new Dialog(this);
+
+        dialog.setContentView(R.layout.candidate_pop_up);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.setTitle("Custom Alert Dialog");
+
+        final TextView candidateName = (TextView) dialog.findViewById(R.id.candidateName);
+        final TextView xValue = (TextView) dialog.findViewById(R.id.xValue);
+        final TextView yValue = (TextView) dialog.findViewById(R.id.yValue);
+        final TextView notesValue = (TextView) dialog.findViewById(R.id.notesValue);
+        final Button moreButton = (Button) dialog.findViewById(R.id.more_button);
+
+
+        moreButton.setOnClickListener(new View.OnClickListener() {
+                                                              @Override
+                                                              public void onClick(View view) {
+                                                                  notesValue.setText(candidate.getCandidateNotes());
+                                                                  moreButton.setVisibility(View.INVISIBLE);
+                                                              }
+                                                          }
+        );
+
+        candidateName.setText( candidate.getCandidateName());
+        xValue.setText(String.format("%3.1f", candidate.getxCoordinate()));
+        yValue.setText(String.format("%3.1f", candidate.getyCoordinate()));
+
+        // prepare to set the Note
+        int noteLength = getNoteLimit();
+        String currNote = candidate.getCandidateNotes();
+        String shortNote = " ";
+
+        if(currNote.length() > noteLength) {
+            shortNote = currNote.substring(0,noteLength) + "...";
+        }  else {
+            shortNote = currNote;
+            moreButton.setVisibility(View.INVISIBLE);
+        }
+        notesValue.setText(shortNote);
+
+        dialog.show();
+    }
+    private int getTouchRange() {
+        // TODO see if we need to vary this based on screen density or API level or things
+        return 120;
+    }
+
+    private int getNoteLimit() {
+        // TODO see if we need to vary this based on screen density or API level or things
+        return 180;
+    }
+
+    double makeSmallAdjustment(double incomingResult) {
         double adjustedResult = 0.0;
 
-        if ( incomingResult < 4.9) {
+        if (incomingResult < 4.9) {
             adjustedResult = incomingResult + 0.4;
         } else {
 
@@ -355,7 +502,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         return adjustedResult;
     }
 
-    boolean widgetsWillOverlap( double result_X_current, double result_Y_current, int currPosition, ArrayList<Candidates>  candidatesList) {
+    boolean widgetsWillOverlap(double result_X_current, double result_Y_current, int currPosition, ArrayList<Candidates> candidatesList) {
         boolean boolResult = false;
 
         for (int i = 0; i < currPosition; i++) {
@@ -364,12 +511,12 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             double existing_Y = get_Y_ResultForCandiate(currCandidate);
 
             // If both X & Y are within 0.3 of another icon, return true
-            if( Math.abs( existing_X - result_X_current ) < 0.3 &&
-                    Math.abs( existing_Y - result_Y_current ) < 0.3) {
+            if (Math.abs(existing_X - result_X_current) < 0.3 &&
+                    Math.abs(existing_Y - result_Y_current) < 0.3) {
                 boolResult = true;
             }
         }
-            return boolResult;
+        return boolResult;
     }
 
     @Override
@@ -383,8 +530,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         super.onConfigurationChanged(newConfig);
 
         // TODO Remove
-        System.out.println( "getResources().getConfiguration().orientation = ");
-        System.out.println( getResources().getConfiguration().orientation);
+//        System.out.println( "getResources().getConfiguration().orientation = ");
+//        System.out.println( getResources().getConfiguration().orientation);
 
         // Display message if user trying to go landscape and API < 23
         checkOrientationChanged();
@@ -393,7 +540,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     // TODO - get this to work when rotation happens during viewing the report
     private void checkOrientationChanged() {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Toast.makeText(this, "Landscape rotation Not supported for this feature.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -401,10 +548,13 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     private boolean getShowTutorial_Rpt() {
         // returns value for whether to show tutorial for Report screen or not
         Boolean returnBool = false;
-        SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);;
+        SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        ;
         Boolean showTutorial = settings.getBoolean("pref_sync", true);
-        if(showTutorial & (displayTutorialRptString == "true")) { returnBool = true; }
-            return returnBool;
+        if (showTutorial & (displayTutorialRptString == "true")) {
+            returnBool = true;
+        }
+        return returnBool;
     }
 
     private void displayTutorialRpt() {
@@ -414,7 +564,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         ViewTarget target = new ViewTarget(R.id.grid_background, this) {
             @Override
             public Point getPoint() {
-                return Utilities.getPointTarget(findViewById(R.id.grid_background),1.2,4);
+                return Utilities.getPointTarget(findViewById(R.id.grid_background), 1.2, 4);
             }
         };
         // Create an OnClickListener to use with Tutorial and to display the next page ...
@@ -474,9 +624,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     public void printDocument(View view) {
         Tracker mTracker;  // used for Google Analytics
 
-        if(BuildConfig.FLAVOR == "free") {
+        if (BuildConfig.FLAVOR == "free") {
             // If this is the Free version of the app - show the Upgrade Now dialog
-            showFeatureNotAvailableDialog( this );
+            showFeatureNotAvailableDialog(this);
         } else {
             // Obtain the shared Tracker instance.
             // TODO uncomment these lines when you add analytics back
@@ -598,12 +748,12 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             if (candidateID != -1 && questionID != -1) {
                 // If the Axis of the current question is not X, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("X")) {
-                    result = calcResponse( i, candidateID, questionID, result);
+                    result = calcResponse(i, candidateID, questionID, result);
                 }
             }
         }
         // divide result by 100, round to hundredth's place and return it.
-        return ( ( (double)Math.round((result * 0.01) * 100d) / 100d));
+        return (((double) Math.round((result * 0.01) * 100d) / 100d));
     }
 
     private double get_Y_ResultForCandiate(Candidates currCandidate) {
@@ -616,15 +766,15 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             if (candidateID != -1 && questionID != -1) {
                 // If the Axis of the current question is not Y, then ignore it ...
                 if (questionsList.get(i).getQuestionAxis().equals("Y")) {
-                    result = calcResponse( i, candidateID, questionID, result);
+                    result = calcResponse(i, candidateID, questionID, result);
                 }
             }
         }
         // divide result by 100, round to hundredth's place and return it.
-        return ( ( (double)Math.round((result * 0.01) * 100d) / 100d));
+        return (((double) Math.round((result * 0.01) * 100d) / 100d));
     }
 
-    private double calcResponse( int i, long candidateID, long questionID, double result) {
+    private double calcResponse(int i, long candidateID, long questionID, double result) {
         double returnResult = result;
         int currResponse = 1;
         int currWeight = 0;
@@ -640,18 +790,18 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             // add the response multiplied by the weight and add it to the result ...
             // if Standard ...
             if (questionType.trim().equals("S")) {
-                System.out.println( "  Inside questionType == S");
+//                System.out.println( "  Inside questionType == S");
 
                 returnResult = result + (currResponse * currWeight);
             } else {   // else must be Inverse, so subtract from 10
                 returnResult = result + ((10 - currResponse) * currWeight);
             }
             // TODO Remove
-            System.out.println( "  --- result       = " + result);
-            System.out.println( "  --- currWeight   = " + currWeight);
-            System.out.println( "  --- currResponse = " + currResponse);
-            System.out.println( "  --- questionType = " + questionType + "***");
-            System.out.println( "  -> returnResult  = " + returnResult);
+//            System.out.println( "  --- result       = " + result);
+//            System.out.println( "  --- currWeight   = " + currWeight);
+//            System.out.println( "  --- currResponse = " + currResponse);
+//            System.out.println( "  --- questionType = " + questionType + "***");
+//            System.out.println( "  -> returnResult  = " + returnResult);
         }
         return returnResult;
     }
@@ -729,9 +879,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             }
 
             // calculate the number of pages needed ...
-            double spaceNeededPerPage = ( numCandidates * canidateDetailHeight );
+            double spaceNeededPerPage = (numCandidates * canidateDetailHeight);
 
-            totalpages = (int) (Math.round(( spaceNeededPerPage / (double) totalPageSize ) +  0.5));
+            totalpages = (int) (Math.round((spaceNeededPerPage / (double) totalPageSize) + 0.5));
 
             totalpages = totalpages + 1; // add one for first page
 
@@ -780,7 +930,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 // start the second page ...
                 newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
                 page = myPdfDocument.startPage(newPage);
-                drawDetailPageNoCanidates( page, 1 );
+                drawDetailPageNoCanidates(page, 1);
                 myPdfDocument.finishPage(page);
 
             } else {
@@ -803,7 +953,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                     drawDetailPage(page, i, drawLine);
                     drawLine = drawLine + canidateDetailHeight;
 
-                    if( drawLine > (totalPageSize - canidateDetailHeight)) {
+                    if (drawLine > (totalPageSize - canidateDetailHeight)) {
                         // if we can't fit any more canidates on the current page, finish it and start a new one
                         myPdfDocument.finishPage(page);
                         newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
@@ -859,7 +1009,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(lineStrokeThick);
-            canvas.drawLine( drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
+            canvas.drawLine(drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
 
             drawLine = drawLine + lineSpacingBig;
 
@@ -881,7 +1031,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             //scale bitmap to desired size
             Bitmap finalIconScalled = Bitmap.createScaledBitmap(candIcon, iconWidth, iconWidth, true); // Make sure w and h are in the correct order
 
-            canvas.drawBitmap(finalIconScalled, iconTab, drawLine - iconAdjustment , paint);
+            canvas.drawBitmap(finalIconScalled, iconTab, drawLine - iconAdjustment, paint);
 
             paint.setTextSize(headingPara);
             detailString = "(initials: ";
@@ -929,7 +1079,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(lineStrokeThick);
-            canvas.drawLine( drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
+            canvas.drawLine(drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
 
             drawLine = drawLine + lineSpacingBig;
 
@@ -1015,13 +1165,10 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // If they click OK, take them to the App Store to buy the Pro version of the app
-                        try
-                        {
+                        try {
                             Intent rateIntent = upgradeIntentForUrl("market://details");
                             startActivity(rateIntent);
-                        }
-                        catch (ActivityNotFoundException e)
-                        {
+                        } catch (ActivityNotFoundException e) {
                             Intent rateIntent = upgradeIntentForUrl("https://play.google.com/store/apps/details");
                             startActivity(rateIntent);
                         }
@@ -1040,18 +1187,14 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         dialog.show();
     }
 
-    private Intent upgradeIntentForUrl(String url)
-    {
+    private Intent upgradeIntentForUrl(String url) {
         // grab resources
         String targetPackageName = getResources().getString(R.string.package_name_pro);
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, targetPackageName)));
         int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-        if (Build.VERSION.SDK_INT >= 21)
-        {
+        if (Build.VERSION.SDK_INT >= 21) {
             flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-        }
-        else
-        {
+        } else {
             //noinspection deprecation
             flags |= Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
         }

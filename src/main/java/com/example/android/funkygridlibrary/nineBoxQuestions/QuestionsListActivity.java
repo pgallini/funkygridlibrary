@@ -114,6 +114,7 @@ public class QuestionsListActivity extends AppCompatActivity {
                                 intent.putExtra("questionText",questionsList.get(position).getQuestionText());
                                 intent.putExtra("questionWeight", Integer.toString(questionsList.get(position).getQuestionWeight()));
                                 intent.putExtra("questionAxis", questionsList.get(position).getQuestionAxis());
+                                intent.putExtra("questionType", questionsList.get(position).getQuestion_type());
                                 startActivityForResult(intent, QUESTIONSUPDATE_ACTIVITY_REQUEST_CODE);
                             }
                         });
@@ -189,17 +190,18 @@ public class QuestionsListActivity extends AppCompatActivity {
                 returnQuestionWeight = Integer.parseInt(tempQuestionWeight);
             };
             String returnQuestionAxis = (extras != null ? extras.getString("returnQuestionAxis") : " ");
+            String returnQuestionType = (extras != null ? extras.getString("returnQuestionType") : " ");
             String returnMode = (extras != null ? extras.getString("returnMode") : " ");
             if(returnMode.equals("ADD")) {
                 // save the question
-                Questions question = questionsOperations.addQuestion(returnQuestionText, returnQuestionWeight, (returnQuestionAxis.equals("X")));
+                Questions question = questionsOperations.addQuestion(returnQuestionText, returnQuestionWeight, (returnQuestionAxis.equals("X")),returnQuestionType);
 
                 questionsList.add(question);
                 displayList.add( returnQuestionText );
 
             } else {
                 // save updated question to the database
-                boolean returnVal =  questionsOperations.updateQuestion(returnQuestionId, returnQuestionText, returnQuestionWeight, (returnQuestionAxis.equals("X")));
+                boolean returnVal =  questionsOperations.updateQuestion(returnQuestionId, returnQuestionText, returnQuestionWeight, (returnQuestionAxis.equals("X")),returnQuestionType);
 
                 // locate the question in questionList and update it ...
                 for( int i = 0; i < questionsList.size(); i++ ) {
@@ -207,6 +209,7 @@ public class QuestionsListActivity extends AppCompatActivity {
                         questionsList.get(i).setQuestionText(returnQuestionText);
                         questionsList.get(i).setQuestionWeight(returnQuestionWeight);
                         questionsList.get(i).setQuestionAxis(returnQuestionAxis);
+                        questionsList.get(i).setQuestion_type(returnQuestionType);
                         break;
                     }
                 }
