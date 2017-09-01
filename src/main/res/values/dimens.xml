@@ -11,7 +11,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="button_main_width">140dp</dimen>
     <dimen name="button_main_height">60dp</dimen>
-    <dimen name="button_small_width">100dp</dimen>
+    <dimen name="button_small_width">80dp</dimen>
+    <dimen name="button_extra_small_width">35dp</dimen>
     <dimen name="button_small_height">40dp</dimen>
     <dimen name="hint_text_size">12dp</dimen>
     <dimen name="text_size_extra_small">14dp</dimen>
@@ -22,6 +23,7 @@
     <dimen name="text_size_big">32dp</dimen>
     <dimen name="text_size_button">16dp</dimen>
     <dimen name="text_size_button_small">12dp</dimen>
+    <dimen name="button_padding">8dp</dimen>
     <!-- ninebox-specific dimensions -->
     <dimen name="question_view_height">210dp</dimen>
     <dimen name="text_padding">2dp</dimen>

@@ -84,6 +84,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     private Candidates currCandidate;
     private double result_X_axis = 0;
     private double result_Y_axis = 0;
+    boolean returnHitCancel = false;  // TODO remove if not used dude
+    int returnIndex = -1;
 
     CustomDrawableView mCustomDrawableView;
     ShowcaseView sv;   // for the showcase (tutorial) screen:
@@ -356,24 +358,14 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         int X = (int) event.getX();
         int Y = (int) event.getY();
         int eventaction = event.getAction();
 
         switch (eventaction) {
             case MotionEvent.ACTION_DOWN:
-                Toast.makeText(this, "ACTION_DOWN AT COORDS " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
                 displayCandidateCard( X, Y );
                 break;
-
-//            case MotionEvent.ACTION_MOVE:
-//                Toast.makeText(this, "MOVE "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
-//                break;
-//
-//            case MotionEvent.ACTION_UP:
-//                Toast.makeText(this, "ACTION_UP "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
-//                break;
         }
         return true;
     }
@@ -410,6 +402,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // grab the number of candidates ....
         int numberOfCandidates = candidatesList.size();
         int currentTouchRange = getTouchRange();
+        ArrayList<Candidates> displayCandidatesList = new ArrayList<Candidates>();
 
         for (int i = 0; i < numberOfCandidates; i++) {
 
@@ -426,68 +419,86 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                 if (yPhysicalLocation > (touchY - currentTouchRange) &&
                         yPhysicalLocation < (touchY + currentTouchRange)
                         ) {
-                    displayPopUp( currCandidate );
-                    // TODO Remove
-                    System.out.println(" ###### We Have A Match !!!!");
-                } else {
-                    // TODO Remove
-                    System.out.println(" ###### We Have NO Match :(");
+                    displayCandidatesList.add(currCandidate);;
                 }
             }
 
         }
+        // Loop through candidates needing display (if any)
+        boolean displayNextBtn = false;
+        boolean displayPrevBtn = false;
+        int displayCandidatesListSize = displayCandidatesList.size();
+        int i = 0;
+        while (i != -1 ) {
+
+            // TODO Remove
+            System.out.println("***   i = " + i);
+            System.out.println("*** displayCandidatesList.size() = " + displayCandidatesList.size());
+
+            if (i < displayCandidatesListSize ) {
+
+                displayPrevBtn = ( i > 0 );
+                displayNextBtn = ( i < ( displayCandidatesListSize - 1));
+                i = displayPopUp( displayCandidatesList.get(i), i, displayPrevBtn, displayNextBtn );
+
+            } else {
+                break;
+            }
+        }
     }
 
-    private void displayPopUp( final Candidates candidate ) {
+    private int displayPopUp( final Candidates candidate, int currIndex, boolean displayPrevBtn, boolean displayNextBtn ) {
         final Dialog dialog = new Dialog(this);
+        returnIndex = currIndex;
+        int maxDialogHeight = 320;
 
         dialog.setContentView(R.layout.candidate_pop_up);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        dialog.setTitle("Custom Alert Dialog");
 
         final TextView candidateName = (TextView) dialog.findViewById(R.id.candidateName);
         final TextView xValue = (TextView) dialog.findViewById(R.id.xValue);
         final TextView yValue = (TextView) dialog.findViewById(R.id.yValue);
         final TextView notesValue = (TextView) dialog.findViewById(R.id.notesValue);
-        final Button moreButton = (Button) dialog.findViewById(R.id.more_button);
-
-
-        moreButton.setOnClickListener(new View.OnClickListener() {
+        final Button closeButton = (Button) dialog.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
                                                               @Override
                                                               public void onClick(View view) {
-                                                                  notesValue.setText(candidate.getCandidateNotes());
-                                                                  moreButton.setVisibility(View.INVISIBLE);
+                                                                  dialog.cancel();
                                                               }
                                                           }
         );
 
+//        String currNotes = candidate.getCandidateNotes();
+//        if( currNotes.length() > 200) {
+//            maxDialogHeight = 120;
+//        } else {
+//            maxDialogHeight = 320;
+//        };
+//
+//        float dp_maxDialogHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxDialogHeight,
+//                getResources().getDisplayMetrics());
+
+        // dynamically set the height of the dialog depending on the length of the notes
+//        LinearLayout linearLayout = new LinearLayout(this);
+//        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT,
+//                LinearLayout.LayoutParams.MATCH_PARENT);
+//        rlp.height = (int) dp_maxDialogHeight;
+//        setContentView(linearLayout, rlp);
+
         candidateName.setText( candidate.getCandidateName());
         xValue.setText(String.format("%3.1f", candidate.getxCoordinate()));
         yValue.setText(String.format("%3.1f", candidate.getyCoordinate()));
-
-        // prepare to set the Note
-        int noteLength = getNoteLimit();
-        String currNote = candidate.getCandidateNotes();
-        String shortNote = " ";
-
-        if(currNote.length() > noteLength) {
-            shortNote = currNote.substring(0,noteLength) + "...";
-        }  else {
-            shortNote = currNote;
-            moreButton.setVisibility(View.INVISIBLE);
-        }
-        notesValue.setText(shortNote);
+        notesValue.setText(candidate.getCandidateNotes());
 
         dialog.show();
+        returnIndex++;
+        return returnIndex;
     }
+
     private int getTouchRange() {
         // TODO see if we need to vary this based on screen density or API level or things
         return 120;
-    }
-
-    private int getNoteLimit() {
-        // TODO see if we need to vary this based on screen density or API level or things
-        return 180;
     }
 
     double makeSmallAdjustment(double incomingResult) {
@@ -528,11 +539,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        // TODO Remove
-//        System.out.println( "getResources().getConfiguration().orientation = ");
-//        System.out.println( getResources().getConfiguration().orientation);
-
         // Display message if user trying to go landscape and API < 23
         checkOrientationChanged();
 
