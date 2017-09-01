@@ -43,6 +43,7 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
     Spinner spinner;
     private Tracker mTracker;  // used for Google Analytics
 
+    // TODO - get candidates_entry layout to work in landscape mode - Nexus S API 22
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Bundle extras = getIntent().getExtras();

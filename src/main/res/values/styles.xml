@@ -67,6 +67,8 @@
         <item name="android:gravity">center</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="android:clickable">true</item>
+
+
     </style>
 
     <style name="MainButtonLayout" >
@@ -117,15 +119,27 @@
 
 
     <style name="SmallButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:layout_width">@dimen/button_main_width</item>
+        <item name="android:layout_height">@dimen/button_small_height</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:padding">@dimen/button_padding</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/ColorPrimaryDark</item>
+    </style>
+
+    <style name="ExtraSmallButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
         <item name="android:background">@color/ColorAccent</item>
         <item name="android:layout_width">@dimen/button_small_width</item>
         <item name="android:layout_height">@dimen/button_small_height</item>
-        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:layout_margin">@dimen/margin_tiny</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:gravity">center</item>
         <item name="android:elevation">@dimen/global_elevation</item>"
-        <item name="android:textSize">@dimen/text_size_button_small</item>
+        <item name="android:textSize">@dimen/text_size_button</item>
         <item name="android:textColor">@color/ColorPrimaryDark</item>
     </style>
 
@@ -218,8 +232,8 @@
         <item name="android:textColor">@color/text_dark</item>
         <item name="android:scrollHorizontally">false</item>
         <item name="android:imeOptions">actionDone</item>
-        <item name="android:lines">8</item> <!-- Total Lines prior display -->
-        <item name="android:minLines">6</item> <!-- Minimum lines -->
+        <item name="android:lines">6</item> <!-- Total Lines prior display -->
+        <item name="android:minLines">4</item> <!-- Minimum lines -->
         <item name="android:gravity">top|left</item> <!-- Cursor Position -->
         <item name="android:maxLines">10</item> <!-- Maximum Lines -->
         <item name="android:scrollbars">vertical</item> <!-- Vertical Scroll Bar -->
