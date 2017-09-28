@@ -102,7 +102,7 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         findViewById(R.id.save_candidate).setOnClickListener(new View.OnClickListener() {
                                                                  @Override
                                                                  public void onClick(View view) {
-                                                                     saveCandidate(view);
+                                                                     saveCandidate();
                                                                  }
                                                              }
         );
@@ -114,6 +114,12 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
                                                                         }
                                                                     }
         );
+    }
+
+    @Override
+    public void onBackPressed(){
+        saveCandidate();
+        super.onBackPressed();
     }
 
     private class MyTextWatcher implements TextWatcher {
@@ -313,7 +319,8 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         return errorFound;
     }
 
-    public void saveCandidate(View view) {
+
+    public void saveCandidate() {
         boolean errorFound = false;
 
         // find the ListView so we can work with it ...
