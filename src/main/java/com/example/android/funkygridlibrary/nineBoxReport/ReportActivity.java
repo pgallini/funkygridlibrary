@@ -468,24 +468,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                                                           }
         );
 
-//        String currNotes = candidate.getCandidateNotes();
-//        if( currNotes.length() > 200) {
-//            maxDialogHeight = 120;
-//        } else {
-//            maxDialogHeight = 320;
-//        };
-//
-//        float dp_maxDialogHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxDialogHeight,
-//                getResources().getDisplayMetrics());
-
-        // dynamically set the height of the dialog depending on the length of the notes
-//        LinearLayout linearLayout = new LinearLayout(this);
-//        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.MATCH_PARENT);
-//        rlp.height = (int) dp_maxDialogHeight;
-//        setContentView(linearLayout, rlp);
-
         candidateName.setText( candidate.getCandidateName());
         xValue.setText(String.format("%3.1f", candidate.getxCoordinate()));
         yValue.setText(String.format("%3.1f", candidate.getyCoordinate()));

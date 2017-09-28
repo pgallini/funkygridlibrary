@@ -124,7 +124,7 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         findViewById(R.id.save_candidate).setOnClickListener(new View.OnClickListener() {
                                                                  @Override
                                                                  public void onClick(View view) {
-                                                                     saveCandidate(view);
+                                                                     saveCandidate();
                                                                  }
                                                              }
         );
@@ -136,6 +136,12 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
                                                                         }
                                                                     }
         );
+    }
+
+    @Override
+    public void onBackPressed(){
+        saveCandidate();
+        super.onBackPressed();
     }
 
     public List<String> getColorLabels(ArrayList<appColor> colorList ) {
@@ -269,7 +275,7 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         return errorFound;
     }
 
-    public void saveCandidate(View view) {
+    public void saveCandidate() {
         boolean errorFound = false;
 
         // find the ListView so we can work with it ...

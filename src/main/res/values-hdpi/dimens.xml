@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="text_margin_small">1dp</dimen>
+
+    <dimen name="card_image_height">64dp</dimen>
+    <dimen name="card_image_width">200dp</dimen>
+    <dimen name="card_title_height">28dp</dimen>
+
+    <dimen name="button_main_width">100dp</dimen>
+    <dimen name="button_main_height">45dp</dimen>
+
+    <dimen name="hint_text_size">8dp</dimen>
+    <!--<dimen name="text_size_extra_small">10dp</dimen>-->
+    <dimen name="text_size_small">12dp</dimen>
+    <dimen name="text_size_medium">16dp</dimen>
+    <dimen name="text_size_button">10dp</dimen>
+    <dimen name="text_size">12dp</dimen>
+    <dimen name="text_size_big">23dp</dimen>
+    <!-- ninebox-specific dimensions -->
+
+    <dimen name="question_number_width">42dp</dimen>
+    <dimen name="question_number_height">32dp</dimen>
+    <dimen name="question_value_height">18dp</dimen>
+    <dimen name="question_view_height">32dp</dimen>
+    <dimen name="seekbar_numbers_size">18dp</dimen>
+
+</resources>

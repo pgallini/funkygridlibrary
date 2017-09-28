@@ -33,60 +33,71 @@
             card_view:cardBackgroundColor="@color/background_main">
 
             <LinearLayout
-                android:id="@+id/candidate_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
-                android:layout_gravity="center"
-                android:gravity="center"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:weightSum="5"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/evalCandidateName"
-                    style="@style/Text_Bold"
-                    android:layout_gravity="center|top" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/candidate_name"
-                android:layout_gravity="center|bottom"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/question_x_of_x_prompt"
-                    style="@style/Text_Instructional"
-                    android:layout_height="@dimen/question_number_height"
-                    android:layout_gravity="right|bottom"
-                    android:gravity="right|bottom"
-                    android:text="@string/question_x_of_x_prompt" />
-
-                <TextView
-                    android:id="@+id/curr_question_no"
-                    style="@style/Text_Instructional"
-                    android:layout_width="@dimen/question_number_width"
-                    android:layout_height="@dimen/question_number_height"
-                    android:layout_gravity="right|bottom"
-                    android:gravity="right|bottom" />
-
-                <TextView
-                    android:id="@+id/question_x_of_x_of"
-                    style="@style/Text_Instructional"
-                    android:layout_height="@dimen/question_number_height"
-                    android:layout_gravity="right|bottom"
-                    android:gravity="right|bottom"
-                    android:text="@string/question_x_of_x_of" />
-
-                <TextView
-                    android:id="@+id/max_question_no"
-                    style="@style/Text_Instructional"
-                    android:layout_width="@dimen/question_number_width"
-                    android:layout_height="@dimen/question_number_height"
+                <LinearLayout
+                    android:id="@+id/candidate_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
                     android:layout_gravity="left|bottom"
-                    android:gravity="left|bottom" />
+                    android:gravity="left|bottom"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/evalCandidateName"
+                        style="@style/Text_Bold"
+                        android:layout_gravity="center|top" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="right|bottom"
+                    android:gravity="left|bottom"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/question_x_of_x_prompt"
+                        style="@style/Text_Instructional"
+                        android:layout_height="@dimen/question_number_height"
+                        android:layout_gravity="right|bottom"
+                        android:gravity="right|bottom"
+                        android:text="@string/question_x_of_x_prompt" />
+
+                    <TextView
+                        android:id="@+id/curr_question_no"
+                        style="@style/Text_Instructional"
+                        android:layout_width="@dimen/question_number_width"
+                        android:layout_height="@dimen/question_number_height"
+                        android:layout_gravity="right|bottom"
+                        android:gravity="right|bottom" />
+
+                    <TextView
+                        android:id="@+id/question_x_of_x_of"
+                        style="@style/Text_Instructional"
+                        android:layout_height="@dimen/question_number_height"
+                        android:layout_gravity="right|bottom"
+                        android:gravity="right|bottom"
+                        android:text="@string/question_x_of_x_of" />
+
+                    <TextView
+                        android:id="@+id/max_question_no"
+                        style="@style/Text_Instructional"
+                        android:layout_width="@dimen/question_number_width"
+                        android:layout_height="@dimen/question_number_height"
+                        android:layout_gravity="left|bottom"
+                        android:gravity="left|bottom" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
@@ -96,19 +107,20 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_below="@+id/top_card"
-            android:layout_weight="3"
+            android:layout_weight="3.2"
             android:background="@color/background_light"
-            android:gravity="bottom"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             android:weightSum="11">
 
             <TextView
                 android:id="@+id/question_text"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="top"
+                android:layout_width="476dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 android:layout_margin="@dimen/text_margin"
-                android:layout_weight="7.77"
+                android:layout_weight="6.0"
+                android:gravity="start"
                 android:padding="@dimen/text_padding"
                 android:textColor="@color/text_dark"
                 android:textSize="@dimen/text_size_medium" />
@@ -119,15 +131,16 @@
                 android:layout_height="0dp"
                 android:layout_below="@+id/question_text"
                 android:layout_gravity="center"
-                android:layout_weight="1.60"
+                android:layout_weight="0"
                 android:background="@color/background_light"
-                android:gravity="center_horizontal"
+                android:gravity="bottom|center_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/valuelabel"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/question_value_height"
+                    android:layout_gravity="bottom"
                     android:text="@string/current_value_label"
                     android:textColor="@color/text_dark"
                     android:textSize="@dimen/text_size_more_small" />
@@ -135,8 +148,8 @@
                 <TextView
                     android:id="@+id/seekbarvalue"
                     android:layout_width="@dimen/question_number_width"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
+                    android:layout_height="@dimen/question_value_height"
+                    android:layout_gravity="right|bottom"
                     android:paddingLeft="4dp"
                     android:textColor="@color/text_dark"
                     android:textSize="@dimen/text_size_more_small" />
@@ -146,10 +159,9 @@
                 android:id="@+id/upper_labels_layout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1.60"
                 android:background="@color/background_light"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_weight="3.4">
 
                 <TextView
                     android:id="@+id/question_label_left"
@@ -185,6 +197,7 @@
                 android:id="@+id/responseSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin_small"
                 android:max="@integer/maxResponse"
                 android:progress="1"
                 android:progressDrawable="@drawable/seekbar_progress"
@@ -219,8 +232,9 @@
 
         <LinearLayout
             style="@style/MainButtonLayout"
-            android:layout_below="@+id/bottom_card"
-            android:layout_weight="0.14">
+            android:layout_width="474dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal">
 
             <Button
                 android:id="@+id/cancel_button"
