@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_margin="@dimen/text_margin"
-                android:layout_weight="6.0"
+                android:layout_weight="5.8"
                 android:gravity="start"
                 android:padding="@dimen/text_padding"
                 android:textColor="@color/text_dark"
@@ -161,7 +161,7 @@
                 android:layout_height="0dp"
                 android:background="@color/background_light"
                 android:orientation="horizontal"
-                android:layout_weight="3.4">
+                android:layout_weight="3.8">
 
                 <TextView
                     android:id="@+id/question_label_left"
