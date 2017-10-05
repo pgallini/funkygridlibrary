@@ -15,13 +15,13 @@
     <dimen name="button_extra_small_width">35dp</dimen>
     <dimen name="button_small_height">40dp</dimen>
     <dimen name="hint_text_size">12dp</dimen>
-    <dimen name="text_size_extra_small">14dp</dimen>
+    <dimen name="text_size_extra_small">16dp</dimen>
     <dimen name="text_size_small">20dp</dimen>
     <dimen name="text_size_more_small">15dp</dimen>
-    <dimen name="text_size_medium">22dp</dimen>
+    <dimen name="text_size_medium">26dp</dimen>
     <dimen name="text_size">26dp</dimen>
     <dimen name="text_size_big">32dp</dimen>
-    <dimen name="text_size_button">16dp</dimen>
+    <dimen name="text_size_button">22dp</dimen>
     <dimen name="text_size_button_small">12dp</dimen>
     <dimen name="button_padding">8dp</dimen>
     <!-- ninebox-specific dimensions -->

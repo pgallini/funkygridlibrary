@@ -10,7 +10,7 @@
 
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar"/>
+        layout="@layout/tool_bar" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -40,15 +40,15 @@
                     android:id="@+id/EditTextNameLayout"
                     style="@style/TextLabel"
                     android:theme="@style/TextLabel"
-                    card_view:errorTextAppearance="@style/MyErrorText"
                     card_view:errorEnabled="true"
-                    >
+                    card_view:errorTextAppearance="@style/MyErrorText">
+
                     <EditText
                         android:id="@+id/EditTextName"
                         style="@style/EditTextStyle"
-                        android:theme="@style/MyEditText"
                         android:hint="@string/edit_candidate_hint"
-                        android:inputType="textPersonName"/>
+                        android:inputType="textPersonName"
+                        android:theme="@style/MyEditText" />
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
@@ -66,9 +66,8 @@
                         <EditText
                             android:id="@+id/EditTextNickName"
                             style="@style/EditTextStyle"
-                            android:theme="@style/MyEditText"
                             android:hint="@string/edit_nickname_hint"
-                            />
+                            android:theme="@style/MyEditText" />
                     </android.support.design.widget.TextInputLayout>
 
                 </LinearLayout>
@@ -79,27 +78,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/EditTextName_layout"
-                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_gravity="bottom|left"
+                android:layout_marginBottom="@dimen/margin_tiny"
                 android:layout_marginLeft="@dimen/cardhead_leftmargin"
                 android:layout_marginRight="@dimen/cardhead_rightmargin"
-                android:layout_marginBottom="@dimen/margin_tiny"
-                android:layout_gravity="bottom|left"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:orientation="horizontal"
                 android:weightSum="12">
 
                 <TextView
                     style="@style/details_text_main"
-                    android:layout_weight="1"
                     android:layout_marginLeft="@dimen/cardhead_leftmargin"
                     android:layout_marginTop="@dimen/margin_small"
+                    android:layout_weight="1"
                     android:text="@string/edit_candidate_icon_label" />
 
                 <ImageView
                     android:id="@+id/current_icon"
                     android:layout_width="@dimen/icon_width"
                     android:layout_height="@dimen/icon_width"
-                    android:layout_marginBottom="@dimen/margin_tiny"
-                    android:layout_gravity="left" />
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="@dimen/margin_tiny" />
 
                 <Button
                     android:id="@+id/edit_candidate_icon"
@@ -118,9 +117,9 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
-            android:weightSum="4"
             android:background="@color/background_light"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="4">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/NotesText_layout"
@@ -136,26 +135,33 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/LinearLayout02"
+                android:id="@+id/button_surrond"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="@dimen/margin_small"
-                android:gravity="center|bottom">
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:weightSum="1">
 
-                <Button
-                    android:id="@+id/cancel_save_candidate"
-                    style="@style/MainButton"
-                    android:background="@color/mutedbutton_color"
-                    android:text="@string/cancel_button" />
+                <LinearLayout
+                    android:id="@+id/LinearLayout02"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="@dimen/margin_small"
+                    android:gravity="bottom|center_horizontal">
 
-                <Button
-                    android:id="@+id/save_candidate"
-                    style="@style/MainButton"
-                    android:text="@string/save_button" />
+                    <Button
+                        android:id="@+id/cancel_save_candidate"
+                        style="@style/MainButton"
+                        android:background="@color/mutedbutton_color"
+                        android:text="@string/cancel_button" />
 
+                    <Button
+                        android:id="@+id/save_candidate"
+                        style="@style/MainButton"
+                        android:text="@string/save_button" />
+
+                </LinearLayout>
             </LinearLayout>
 
-        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout></RelativeLayout>
