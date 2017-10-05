@@ -150,10 +150,17 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
 //                                MainActivity.setCurrentCandidate(position);
 //                                Intent intent = new Intent(view.getContext(), Evaluation.class);
 //                                startActivity(intent);
+
+//                                Intent intent = new Intent(view.getContext(), Evaluation.class);
+//
+
                                 // send the position of the current Candidate to Evaluation activity
                                 Intent intent = new Intent(view.getContext(), Evaluation.class);
-                                intent.putExtra("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
-                                intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
+                                Bundle extras = new Bundle();
+                                extras.putString("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
+                                // tell Evalute that we ARE only evautating the current candidate
+                                extras.putString("evalCurrentCandidateOnly", Boolean.toString(true));
+                                intent.putExtras(extras);
 
                                 startActivity(intent);
                             }

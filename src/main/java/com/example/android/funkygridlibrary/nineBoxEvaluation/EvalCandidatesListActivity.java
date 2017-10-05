@@ -166,6 +166,8 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
 
                                     Bundle extras = new Bundle();
                                     extras.putString("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
+                                    // tell Evalute that we are NOT only evautating the current candidate
+                                    extras.putString("evalCurrentCandidateOnly", Boolean.toString(false));
                                     intent.putExtras(extras);
 
 //                                    intent.putExtra("position", Long.toString(position));

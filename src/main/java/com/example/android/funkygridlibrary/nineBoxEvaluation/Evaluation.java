@@ -79,6 +79,8 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
         } else {
 
             String currentPositionString = intent.getStringExtra("com.example.android.funkygridlibrary.nineBoxEvaluation.position");
+            String evalCurrentCandidateOnlyString = intent.getStringExtra("evalCurrentCandidateOnly");
+            final Boolean evalCurrentCandidateOnly = Boolean.parseBoolean(evalCurrentCandidateOnlyString);
 
             // TODO Remove
             System.out.println(" *****  Inside  Evaluation.class ****");
@@ -161,7 +163,6 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                     @Override
                     public void onClick(View v) {
                         // save the response
-                        // TODO make sure position is really the same thing as index
                         int candidateIndex = getCurrentCandidateIndex();
                         // grab resources
                         Resources R = getResources();
@@ -174,7 +175,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                                     currentQuestionNo++;
                                     if (currentQuestionNo == maxQuestionNo) {
                                         // if we are now on the last question, change the text of the button to Next Candidate or Done
-                                        if (candidateIndex == (candidatesList.size() - 1)) {
+                                        if ((candidateIndex == (candidatesList.size() - 1)) || evalCurrentCandidateOnly)  {
                                             nextQuestionButtonView.setText(R.getIdentifier("done_button", "string", getPackageName()));
                                         } else {
                                             nextQuestionButtonView.setText(R.getIdentifier("next_question_button_alt", "string", getPackageName()));
@@ -182,19 +183,26 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                                     }
                                     onResume();
                                 } else {
-                                    // increment the index for the next candidate ...
-//                            MainActivity.incrementCurrentCandidate();
-                                    incrementCurrentCandidateIndex();
-                                    // reset the Questions
-                                    currentQuestionNo = 1;
-                                    if (candidateIndex < candidatesList.size()) {
-                                        // reset label of the Next btn
-                                        nextQuestionButtonView.setText(R.getIdentifier("next_question_button", "string", getPackageName()));
-                                        onResume();
+                                    // if we are Not evaluating just the current candidate ...
+                                    if( !evalCurrentCandidateOnly ) {
+                                        // increment the index for the next candidate ...
+                                        incrementCurrentCandidateIndex();
+                                        // reset the Questions
+                                        currentQuestionNo = 1;
+                                        if (candidateIndex < candidatesList.size()) {
+                                            // reset label of the Next btn
+                                            nextQuestionButtonView.setText(R.getIdentifier("next_question_button", "string", getPackageName()));
+                                            onResume();
+                                        } else {
+                                            // unless we are on the last candidate
+                                            setCurrentCandidateIndex(0);
+                                            Intent intent = new Intent();
+                                            intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                                            setResult(RESULT_OK, intent);
+                                            finish();
+                                        }
+                                     // if we ARE only evaluting the current candidate, then we're done, let's get out of here!
                                     } else {
-                                        // unless we are on the last candidate
-//                                MainActivity.setCurrentCandidate(0);
-                                        setCurrentCandidateIndex(0);
                                         Intent intent = new Intent();
                                         intent.putExtra("displayTutorialAddString", displayTutorialAddString);
                                         setResult(RESULT_OK, intent);
