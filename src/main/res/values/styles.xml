@@ -95,6 +95,20 @@
         <item name="android:textColor">@color/ColorPrimaryDark</item>
     </style>
 
+    <style name="MainButtonThree" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:background">@color/ColorAccent</item>
+        <item name="android:layout_width">@dimen/button_main_three_width</item>
+        <item name="android:layout_height">@dimen/button_main_height</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:elevation">@dimen/global_elevation</item>"
+        <item name="android:textSize">@dimen/text_size_button</item>
+        <item name="android:textColor">@color/ColorPrimaryDark</item>
+    </style>
+
     <!--This is the original style - title left aligned, dark color-->
     <style name="MainButtonText" >
         <item name="android:layout_width">wrap_content</item>
