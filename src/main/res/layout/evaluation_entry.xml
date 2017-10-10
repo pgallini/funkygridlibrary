@@ -223,14 +223,20 @@
             android:layout_weight="0.14">
 
             <Button
+                android:id="@+id/previous_button"
+                style="@style/MainButtonThree"
+                android:background="@color/mutedbutton_color"
+                android:text="@string/previous_question_button" />
+
+            <Button
                 android:id="@+id/cancel_button"
-                style="@style/MainButton"
+                style="@style/MainButtonThree"
                 android:background="@color/mutedbutton_color"
                 android:text="@string/cancel_button" />
 
             <Button
                 android:id="@+id/next_question_button"
-                style="@style/MainButton"
+                style="@style/MainButtonThree"
                 android:text="@string/next_question_button" />
         </LinearLayout>
 

@@ -60,6 +60,10 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
         this.currentCandidateIndex++;
     }
 
+    public void decrementCurrentCandidateIndex() {
+        this.currentCandidateIndex--;
+    }
+
     private int currentCandidateIndex = 0;
     // for the showcase (hint) screen:
     ShowcaseView sv;
@@ -156,6 +160,61 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
 
                     @Override
                     public void onStopTrackingTouch(final SeekBar seekBar) {
+                    }
+                });
+
+                findViewById(R.id.previous_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // save the response
+                        int candidateIndex = getCurrentCandidateIndex();
+                        // grab resources
+                        Resources R = getResources();
+
+                        if (candidateIndex < candidatesList.size()) {
+
+                            if (currentQuestionNo  > 0 ) {
+                                saveResponse(candidatesList.get(candidateIndex).getCandidateID(), questionsList.get((currentQuestionNo - 1)).getQuestionID(), currentResponse);
+                                if (currentQuestionNo > 1) {
+                                    currentQuestionNo--;
+
+                                    onResume();
+                                } else {
+                                    if( !evalCurrentCandidateOnly ) {       // if we are Not evaluating just the current candidate ...
+                                        // increment the index for the next candidate ...
+                                        decrementCurrentCandidateIndex();
+                                        // reset the Questions
+                                        currentQuestionNo = questionsList.size() - 1;
+                                        if (candidateIndex > 0 ) {
+                                            // TODO disable Previous button when at the first question first candidate
+                                            // reset label of the Next btn
+//                                            nextQuestionButtonView.setText(R.getIdentifier("next_question_button", "string", getPackageName()));
+                                            onResume();
+                                        } else {
+                                            // unless we are on the last candidate
+                                            setCurrentCandidateIndex(0);
+                                            Intent intent = new Intent();
+                                            intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                                            setResult(RESULT_OK, intent);
+                                            finish();
+                                        }
+                                        // if we ARE only evaluting the current candidate, then we're done, let's get out of here!
+                                    } else {
+                                        Intent intent = new Intent();
+                                        intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                                        setResult(RESULT_OK, intent);
+                                        finish();
+                                    }
+                                }
+                            }
+                        } else {
+                            // if we've looped past the last candidate, reset the index to 0 and finish
+                            setCurrentCandidateIndex(0);
+                            Intent intent = new Intent();
+                            intent.putExtra("displayTutorialAddString", displayTutorialAddString);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                        }
                     }
                 });
 
@@ -279,7 +338,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
             displayName.setText(candidatesList.get(candidateIndex).getCandidateName());
             candidateID = candidatesList.get(candidateIndex).getCandidateID();
 
-            if (currentQuestionNo <= questionsList.size()) {
+            if (currentQuestionNo <= questionsList.size() && currentQuestionNo > 0) {
                 currentQuestionText = questionsList.get((currentQuestionNo - 1)).getQuestionText();
                 // If the question needs a substitution for Nick Name, apply it here
                 currentQuestionText = currentQuestionText.replaceAll("%%NAME%%", candidatesList.get(candidateIndex).getCandidateNickName());

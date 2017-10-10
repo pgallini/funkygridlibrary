@@ -65,7 +65,8 @@
     <string name="evaluation_for_prompt">Evaluating:</string>
     <string name="question_x_of_x_prompt">Question:   </string>
     <string name="question_x_of_x_of">of </string>
-    <string name="next_question_button">Next Question</string>
+    <string name="next_question_button">Next</string>
+    <string name="previous_question_button">Previous</string>
     <string name="next_question_button_alt">Next Person</string>
     <string name="dialog_no_candidates_title">No People Found!</string>
     <string name="dialog_no_candidates_message">You haven\'t added any persons yet.  Please select Add People and add people. </string>

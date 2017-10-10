@@ -10,6 +10,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="button_main_width">140dp</dimen>
+    <dimen name="button_main_three_width">100dp</dimen>
     <dimen name="button_main_height">60dp</dimen>
     <dimen name="button_small_width">80dp</dimen>
     <dimen name="button_extra_small_width">35dp</dimen>
