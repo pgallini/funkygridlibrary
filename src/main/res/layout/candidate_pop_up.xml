@@ -69,7 +69,7 @@
             style="@style/PopUpBoxStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notesLable" />
+            android:text="@string/notesLabel" />
 
         <ScrollView
             android:layout_width="fill_parent"
