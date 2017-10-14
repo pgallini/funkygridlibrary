@@ -111,7 +111,7 @@
 
     <string name="xCoordLable">Performance:</string>
     <string name="yCoordLable">Capacity:</string>
-    <string name="notesLable">Notes:</string>
+    <string name="notesLabel">Notes:</string>
 
     <string name="feature_not_available_title">Upgrade to the Pro Version!</string>
     <string name="feature_not_available_message">This feature is not available in the free version of bird-in-hand.  Select OK now to upgrade to the Pro version and the most out of the app!</string>

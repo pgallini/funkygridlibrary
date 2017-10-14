@@ -163,6 +163,7 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
                     }
                 });
 
+                // TODO change Done button to Next
                 findViewById(R.id.previous_button).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

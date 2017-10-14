@@ -387,10 +387,10 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         tmpLocation = tmpLocation + actionBarHeight;
         int yPhysicalLocation = (int) tmpLocation;
 
-        // TODO Remove
-        System.out.println("***   result_Y_axis     = " + result_Y_axis);
-        System.out.println("***   actionBarHeight   = " + actionBarHeight);
-        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
+//        // Used for debug
+//        System.out.println("***   result_Y_axis     = " + result_Y_axis);
+//        System.out.println("***   actionBarHeight   = " + actionBarHeight);
+//        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
         return yPhysicalLocation;
     }
 
@@ -430,11 +430,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         int displayCandidatesListSize = displayCandidatesList.size();
         int i = 0;
         while (i != -1 ) {
-
-            // TODO Remove
-            System.out.println("***   i = " + i);
-            System.out.println("*** displayCandidatesList.size() = " + displayCandidatesList.size());
-
             if (i < displayCandidatesListSize ) {
 
                 displayPrevBtn = ( i > 0 );
