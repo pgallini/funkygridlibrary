@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.funkygridlibrary.R;
+import com.example.android.funkygridlibrary.common.BuildConfigUtils;
 import com.example.android.funkygridlibrary.common.Utilities;
 import com.example.android.funkygridlibrary.drawables.drawPoint;
 import com.example.android.funkygridlibrary.nineBoxCandidates.CandidateOperations;
@@ -55,7 +56,6 @@ import com.example.android.funkygridlibrary.nineBoxCandidates.Candidates;
 import com.example.android.funkygridlibrary.nineBoxEvaluation.EvaluationOperations;
 import com.example.android.funkygridlibrary.nineBoxQuestions.Questions;
 import com.example.android.funkygridlibrary.nineBoxQuestions.QuestionsOperations;
-import com.github.amlcurran.showcaseview.BuildConfig;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -607,7 +607,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     public void printDocument(View view) {
         Tracker mTracker;  // used for Google Analytics
 
-        if (BuildConfig.FLAVOR == "free") {
+        String flavor = (String) BuildConfigUtils.getBuildConfigValue(this, "FLAVOR");
+        if (flavor == "free") {
             // If this is the Free version of the app - show the Upgrade Now dialog
             showFeatureNotAvailableDialog(this);
         } else {
