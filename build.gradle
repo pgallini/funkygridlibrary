@@ -13,6 +13,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.google.android.gms:play-services-analytics:9.0.0'
+//    compile 'com.google.android.gms:play-services-ads:11.2.0'
     //    compile fileTree(dir: 'libs', include: ['*.jar'])
     //    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     //        exclude group: 'com.android.support', module: 'support-annotations'
