@@ -95,6 +95,7 @@
     <string name="email_sent_background">Sending report in the background.</string>
     <string name="save_rpt_button">Save Report</string>
 
+    <string name="menu_upgrade">Upgrade Now</string>
     <string name="menu_configure_questions">Configure Questions</string>
     <string name="menu_configure_privacy">View Privacy Statement</string>
     <string name="title_display_about_screen">Display Version for &appname;</string>
@@ -114,8 +115,11 @@
     <string name="yCoordLable">Capacity:</string>
     <string name="notesLabel">Notes:</string>
 
+    <string name="why_upgrade_title">Why upgrade to the Pro Version?</string>
+    <string name="why_upgrade_message">Upgrade to the Pro version now and enjoy the following benefits:\n  - No ads \n   - Ability to change the questions \n   - View a summary of results. \n \n  Select OK now to upgrade!</string>
+
     <string name="feature_not_available_title">Upgrade to the Pro Version!</string>
-    <string name="feature_not_available_message">This feature is not available in the free version of bird-in-hand.  Select OK now to upgrade to the Pro version and the most out of the app!</string>
+    <string name="feature_not_available_message">This feature is not available in the free version of bird-in-hand.  Select OK now to upgrade to the Pro version and get the most out of the app!</string>
 
     <string name="color_select_title">Please select a new color</string>
     <string name="color_swatch_description">Color %1$d</string>
