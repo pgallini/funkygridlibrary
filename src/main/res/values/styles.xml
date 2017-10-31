@@ -375,17 +375,17 @@
     80% -> CC
     -->
     <style name="CustomShowcaseTheme" parent="ShowcaseView">
-        <item name="sv_backgroundColor">#B41249d9</item>
-        <item name="sv_showcaseColor">#25467A</item>
+        <item name="sv_backgroundColor">@color/tutorial_background</item>
+        <item name="sv_showcaseColor">@color/showcase_color</item>
         <item name="sv_buttonText">Close</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
         <item name="sv_detailTextAppearance">@style/CustomText2</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingRight">6dp</item>
 
-        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_margin">6dp</item>
     </style>
 
     <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">

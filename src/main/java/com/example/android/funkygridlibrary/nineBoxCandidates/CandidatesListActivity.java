@@ -35,18 +35,11 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
-//import com.birdinhand.funkynetsoftware.R;
-
-//import nineBoxEvaluation.Evaluation;
-//import nineBoxMain.MainActivity;
-
-//import common.Utilities;
-
 /**
  *
  * Created by Paul Gallini, 2016
  *
- * This activity lists out the existing candidates and allows for additions, deletions, and evaluation .
+ * This activity lists out the existing candidates and allows for additions, deletions, and (link to) evaluation.
  *
  */
 public class CandidatesListActivity extends AppCompatActivity implements OnShowcaseEventListener {
@@ -62,12 +55,20 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
     private Toolbar toolbar;
     ShowcaseView sv;   // for the showcase (tutorial) screen:
     private Tracker mTracker;  // used for Google Analytics
+    private Boolean displayTutorialMain = false;   // this represents the overall Tutorial flag
     private String displayTutorialAddString = "true"; // used to tell Main Activity if we're done with this part of the Tutorial
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.candidates_list);
+
+        Intent intent = getIntent();
+        // the Main activity will send in the main toggle for the Tutorial ... grab it
+        if (intent != null) {
+            String displayTutorialMainString = intent.getStringExtra("displayTutorialMain");
+            displayTutorialMain = Boolean.valueOf(displayTutorialMainString);
+        }
 
         // set-up the operations class for Candidates ...
         candidateOperations = new CandidateOperations(this);
@@ -178,7 +179,6 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
             public void onClick(View view) {
 
                 Intent intent = new Intent();
-
                 intent.putExtra("displayTutorialAddString",displayTutorialAddString);
 
                 //get ready to send the result back to the caller (MainActivity)
@@ -206,8 +206,7 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
         Boolean returnBool = false;
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);;
         Boolean showTutorial = settings.getBoolean("pref_sync", true);
-        // TODO - change this so we are passing MainActivity.displayTutorialAdd in with the intent bundle
-//        if(showTutorial & MainActivity.displayTutorialAdd) { returnBool = true; }
+        if(showTutorial & displayTutorialMain) { returnBool = true; }
         return returnBool;
     }
 
@@ -242,8 +241,6 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
         displayTutorialAddString = "false";
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        // TODO - determine if this is needed.  If so - figure out how to make it happen
-//        MainActivity.evalTutorialToggles(editor);
     }
 
     // TODO see if we can combine this with others

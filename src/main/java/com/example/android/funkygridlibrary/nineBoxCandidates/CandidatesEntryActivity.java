@@ -46,7 +46,6 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
     // TODO - get candidates_entry layout to work in landscape mode - Nexus S API 22
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Bundle extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.candidates_entry);
         // make sure the soft keyboard doesn't push everything up ...

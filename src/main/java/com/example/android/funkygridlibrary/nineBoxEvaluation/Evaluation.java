@@ -86,10 +86,6 @@ public class Evaluation extends AppCompatActivity implements OnShowcaseEventList
             String evalCurrentCandidateOnlyString = intent.getStringExtra("evalCurrentCandidateOnly");
             final Boolean evalCurrentCandidateOnly = Boolean.parseBoolean(evalCurrentCandidateOnlyString);
 
-            // TODO Remove
-            System.out.println(" *****  Inside  Evaluation.class ****");
-            System.out.println("currentPositionString = " + currentPositionString);
-
             // While testing with an emulator - every now and then the intent is null.  I cannot figure it out ... so we need to trap for ull
             if (currentPositionString == null) {
                 super.onCreate(savedInstanceState);

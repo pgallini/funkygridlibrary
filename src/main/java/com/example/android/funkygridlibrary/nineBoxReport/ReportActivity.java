@@ -92,12 +92,21 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     ShowcaseView sv2;
     private Tracker mTracker;  // used for Google Analytics
     private String displayTutorialRptString = "true"; // used to tell Main Activity if we're done with this part of the Tutorial
+    private Boolean displayTutorialRpt = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Bundle extras = getIntent().getExtras();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
+
+        Intent intent = getIntent();
+        // the Main activity will send in the main toggle for the Tutorial ... grab it
+        if (intent != null) {
+            String displayTutorialMainString = intent.getStringExtra("displayTutorialMain");
+            displayTutorialRpt = Boolean.valueOf(displayTutorialMainString);
+        }
+
         // attach the layout to the toolbar object and then set the toolbar as the ActionBar ...
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
@@ -311,7 +320,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         if (getShowTutorial_Rpt()) {
             displayTutorialRpt();
             // Now that it's been displayed, lets turn it off
-            displayTutorialRptString = "false";
+            displayTutorialRpt = false;
         }
         // convert the layerDrawable to bitmap so we can save it ...
         Bitmap bitMapToSave = drawableToBitmap(layerDrawable);
@@ -348,7 +357,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                                                                 @Override
                                                                 public void onClick(View view) {
                                                                     Intent intent = new Intent();
-                                                                    intent.putExtra("displayTutorialRptString", displayTutorialRptString);
+                                                                    intent.putExtra("displayTutorialRptString", String.valueOf(displayTutorialRpt));
                                                                     setResult(RESULT_OK, intent);
                                                                     finish();
                                                                 }
@@ -534,7 +543,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         ;
         Boolean showTutorial = settings.getBoolean("pref_sync", true);
-        if (showTutorial & (displayTutorialRptString == "true")) {
+        if (showTutorial & displayTutorialRpt) {
             returnBool = true;
         }
         return returnBool;
@@ -569,7 +578,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         // instantiate a new view for the the tutorial ...
         sv = buildTutorialView(target, R.string.showcase_rpt_message1, tutBtnListener);
         sv.setButtonPosition(lps);
-        displayTutorialRptString = "false";
+        displayTutorialRpt = false;
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
     }
