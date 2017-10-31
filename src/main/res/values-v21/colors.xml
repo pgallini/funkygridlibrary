@@ -11,13 +11,15 @@
     <!--<color name="toolbar_color">#715553</color>-->
     <color name="toolbar_color">#ffffff</color>
 
+    <!--colors for tutorial - see notes in styles for adjusting the opacity-->
+    <color name="tutorial_background">#B41249d9</color>
+    <color name="showcase_color">#25467A</color>
+
     <!--<color name="background_main">#4963CB</color>-->
     <!--<color name="background_main">#48bf9f</color>-->
     <!--<color name="background_main">#B18581</color>-->
     <!--<color name="background_main">#7F2E49</color>-->
     <color name="background_main">#095E7F</color>
-
-
     <color name="background_light">#ffffff</color>
     <color name="ColorAccent">#095E7F</color>
     <!--<color name="ColorAccent">#CC9BB4</color>-->

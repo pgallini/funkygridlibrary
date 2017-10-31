@@ -70,6 +70,13 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eval_cand_list);
 
+        Intent intent = getIntent();
+        // the Main activity will send in the main toggle for the Tutorial ... grab it
+        if (intent != null) {
+            String displayTutorialMainString = intent.getStringExtra("displayTutorialMain");
+            displayTutorialEval = Boolean.valueOf(displayTutorialMainString);
+        }
+
         // set-up the operations class for Candidates ...
         candidateOperations = new CandidateOperations(this);
         candidateOperations.open();
@@ -113,8 +120,7 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
             } else if (getShowTutorial_Eval()) {
                 displayTutorialEval();
                 // Now that it's been displayed, lets turn it off
-                // TODO send this back in the intent bundle
-//                MainActivity.displayTutorialAdd = false;
+                displayTutorialEval = false;
             }
             ;
 
@@ -160,8 +166,6 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    // TODO send this back in the intent bundle
-//                                    MainActivity.setCurrentCandidate(position);
                                     Intent intent = new Intent(view.getContext(), Evaluation.class);
 
                                     Bundle extras = new Bundle();
@@ -169,15 +173,7 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
                                     // tell Evalute that we are NOT only evautating the current candidate
                                     extras.putString("evalCurrentCandidateOnly", Boolean.toString(false));
                                     intent.putExtras(extras);
-
-//                                    intent.putExtra("position", Long.toString(position));
-//                                    intent.putExtra("candidateId", Long.toString(candidatesList.get(position).getCandidateID()));
-
-                                    // TODO Remove
-                                    System.out.println( " *****  About to call Evaluation.class ****");
-                                    System.out.println("position = " + Long.toString(position));
-
-                                            startActivity(intent);
+                                    startActivity(intent);
                                 }
                             });
                     // I know it's odd to have the progress icon as it's own target - but doing the same thing as the primary target ...
@@ -186,9 +182,13 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    // TODO send this back in the intent bundle
-//                                    MainActivity.setCurrentCandidate(position);
                                     Intent intent = new Intent(view.getContext(), Evaluation.class);
+
+                                    Bundle extras = new Bundle();
+                                    extras.putString("com.example.android.funkygridlibrary.nineBoxEvaluation.position", Long.toString(position));
+                                    // tell Evalute that we are NOT only evautating the current candidate
+                                    extras.putString("evalCurrentCandidateOnly", Boolean.toString(false));
+                                    intent.putExtras(extras);
                                     startActivity(intent);
                                 }
                             });
@@ -203,6 +203,14 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
             findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    Intent intent = new Intent();
+                    intent.putExtra("displayTutorialEvalString",String.valueOf(displayTutorialEval));
+
+                    //get ready to send the result back to the caller (MainActivity)
+                    //and put our intent into it (RESULT_OK will tell the caller that
+                    //we have successfully accomplished our task..
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             });
@@ -330,12 +338,9 @@ public class EvalCandidatesListActivity extends AppCompatActivity implements OnS
         // instantiate a new view for the the tutorial ...
         sv = buildTutorialView(target, R.string.showcase_eval_list_message1, tutBtnListener2);
         sv.setButtonPosition(lps);
-        // TODO - send this back to Main Activity
         displayTutorialEval = false;
         SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        // TODO - figure out what to do here
-//        Utilities.evalTutorialToggles(editor);
     }
 
     // TODO see if we can combine this with others
