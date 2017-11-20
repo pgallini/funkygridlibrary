@@ -21,7 +21,7 @@ public class EvaluationOperations {
         private SQLiteDatabase database;
 
         public EvaluationOperations(Context context) {
-            dbHelper = new DatabaseOpenHelper(context);
+            dbHelper = DatabaseOpenHelper.getInstance(context);
         }
 
         public void open() throws SQLException {
@@ -84,15 +84,9 @@ public class EvaluationOperations {
         String[] tableColumns = new String[] {
                 DatabaseOpenHelper.RESP_ID
         };
-
         Cursor c = database.query(DatabaseOpenHelper.RESPONSES, tableColumns, null, null,
                 null, null, null);
-
-        if( c.getCount() > 0 ) {
-            recsFound = true;
-
-        }
-
+        if( c.getCount() > 0 ) { recsFound = true; }
         return !recsFound;
     }
 

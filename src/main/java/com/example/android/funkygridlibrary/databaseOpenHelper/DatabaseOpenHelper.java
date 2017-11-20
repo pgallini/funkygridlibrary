@@ -118,10 +118,22 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     public final Context fContext;
     public ArrayList<appColor> colorList = new ArrayList<appColor>();
+    private static DatabaseOpenHelper mInstance = null;
 
-    public DatabaseOpenHelper(Context context) {
+    private DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         fContext = context;
+    }
+
+    public static DatabaseOpenHelper getInstance(Context ctx) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (mInstance == null) {
+            mInstance = new DatabaseOpenHelper(ctx.getApplicationContext());
+        }
+        return mInstance;
     }
 
     @Override
@@ -280,7 +292,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         {
 //            Log.e(TAG, e.getMessage(), e);
             System.out.println( e.getMessage() );
-
         }
         finally
         {

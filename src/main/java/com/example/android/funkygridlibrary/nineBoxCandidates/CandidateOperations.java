@@ -23,7 +23,7 @@ public class CandidateOperations {
         private SQLiteDatabase database;
 
         public CandidateOperations(Context context) {
-            dbHelper = new DatabaseOpenHelper(context);
+            dbHelper = DatabaseOpenHelper.getInstance(context);
         }
 
         public void open() throws SQLException {

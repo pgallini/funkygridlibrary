@@ -59,7 +59,8 @@ public class CandidatesUpdateActivity extends AppCompatActivity implements Adapt
         setSupportActionBar(toolbar);
         // load colols from DB for spinner ...
         // Spinner Drop down elements
-        dbHelper = new DatabaseOpenHelper(this);
+        dbHelper = DatabaseOpenHelper.getInstance(this);
+
         colorList = dbHelper.getAllColors();
 
         // get the data on the candidate being updated ...

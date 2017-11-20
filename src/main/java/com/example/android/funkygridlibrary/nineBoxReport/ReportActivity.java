@@ -15,24 +15,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CancellationSignal;
-import android.os.ParcelFileDescriptor;
-import android.print.PageRange;
-import android.print.PrintAttributes;
-import android.print.PrintDocumentAdapter;
-import android.print.PrintDocumentInfo;
 import android.print.PrintManager;
-import android.print.pdf.PrintedPdfDocument;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -63,11 +54,12 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.example.android.funkygridlibrary.nineBoxReport.ReportHelper.drawableToBitmap;
+import static com.example.android.funkygridlibrary.nineBoxReport.ReportHelper.get_X_ResultForCandiate;
+import static com.example.android.funkygridlibrary.nineBoxReport.ReportHelper.get_Y_ResultForCandiate;
+import static com.example.android.funkygridlibrary.nineBoxReport.ReportHelper.saveBitmapToFile;
 
 /**
  * Created by Paul Gallini on 5/11/16.
@@ -113,7 +105,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         setSupportActionBar(toolbar);
         // create bitmap of the main Grid background
         Bitmap mainBackground = BitmapFactory.decodeResource(getResources(), R.drawable.grid_background);
-
+        // reduce the size of the bitmap to save memory
+//        mainBackground = Utilities.getResizedBitmap(mainBackground, 200);
         // convert the bitmap to make it mutable (otherwise, unmutable error will occur)
         Bitmap mainBackground_mb = mainBackground.copy(Bitmap.Config.ARGB_8888, true);
         // get dimenstions from the integers file
@@ -175,25 +168,20 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             }
         }
 
-        // for early API levels - we need to use a temp drawable to manage adding layers
-        Drawable[] layers = new Drawable[2];
         // create a canvas upon which we will draw the final grid
         Canvas gridCanvas = new Canvas(Bitmap.createBitmap(reportgrid_height, reportgrid_width, Bitmap.Config.ARGB_8888));
 
         // Convert Bitmap to Drawable
         Drawable mainBackgroundDrawable = new BitmapDrawable(getResources(), mainBackground_mb);
+        GridLayerDrawable layerDrawable = generateGridLayer(reportgrid_height, reportgrid_width, mainBackgroundDrawable);
 
-        // for cases where API level is 23 or greater, we can use addLayer so we
-        // create drawable array starting with just our background
-        Drawable finalGrid[] = new Drawable[]{mainBackgroundDrawable};
-        // create a custom layerDrawable object ... to which we will add our circles
-        GridLayerDrawable layerDrawable = new GridLayerDrawable(finalGrid);
+        // for early API levels - we need to use a temp drawable to manage adding layers
+        Drawable[] layers = new Drawable[2];
 
         // using getIntrinsicHeight() inside setWidgetPosition returns different values at times ... so
         //    we will try grabbing it once and passing it in ...
         int gridHeight = layerDrawable.getIntrinsicHeight();
 
-        GridLayerDrawable tmpLayerDrawable;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             // for API 22 and below, we start with adding the background grid to layer 1
             layers[0] = mainBackgroundDrawable;
@@ -236,9 +224,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             LayerDrawable newPoint = currDrawPoint.getPoint(currCandidate.getCandidateInitials());
             Drawable tempPoint = newPoint.mutate();
 
-            result_X_axis = get_X_ResultForCandiate(currCandidate);
+            result_X_axis = get_X_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
             currCandidate.setxCoordinate(result_X_axis);
-            result_Y_axis = get_Y_ResultForCandiate(currCandidate);
+            result_Y_axis = get_Y_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
             currCandidate.setyCoordinate(result_Y_axis);
 
             if (widgetsWillOverlap(result_X_axis, result_Y_axis, i, candidatesList)) {
@@ -365,6 +353,15 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         );
     }
 
+    private GridLayerDrawable generateGridLayer(int reportgrid_height, int reportgrid_width, Drawable mainBackgroundDrawable) {
+        // for cases where API level is 23 or greater, we can use addLayer so we
+        // create drawable array starting with just our background
+        Drawable finalGrid[] = new Drawable[]{mainBackgroundDrawable};
+        // create a custom layerDrawable object ... to which we will add our circles
+        GridLayerDrawable layerDrawable = new GridLayerDrawable(finalGrid);
+        return layerDrawable;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int X = (int) event.getX();
@@ -392,14 +389,13 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         double tmpLocation = gridHeight - (((result_Y_axis / 10.0) * (double) gridHeight));
 
         // add adjustment for the height of the action bar ....
-//        tmpLocation = tmpLocation + actionBarHeight + ( widget_width / 4 );
         tmpLocation = tmpLocation + actionBarHeight;
         int yPhysicalLocation = (int) tmpLocation;
 
-//        // Used for debug
-//        System.out.println("***   result_Y_axis     = " + result_Y_axis);
-//        System.out.println("***   actionBarHeight   = " + actionBarHeight);
-//        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
+            //        // Used for debug
+            //        System.out.println("***   result_Y_axis     = " + result_Y_axis);
+            //        System.out.println("***   actionBarHeight   = " + actionBarHeight);
+            //        System.out.println("***   yPhysicalLocation = " + yPhysicalLocation);
         return yPhysicalLocation;
     }
 
@@ -431,7 +427,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
                     displayCandidatesList.add(currCandidate);;
                 }
             }
-
         }
         // Loop through candidates needing display (if any)
         boolean displayNextBtn = false;
@@ -456,6 +451,7 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         returnIndex = currIndex;
         int maxDialogHeight = 320;
 
+        // TODO Add star to Person A & Person B
         dialog.setContentView(R.layout.candidate_pop_up);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -504,8 +500,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 
         for (int i = 0; i < currPosition; i++) {
             currCandidate = candidatesList.get(i);
-            double existing_X = get_X_ResultForCandiate(currCandidate);
-            double existing_Y = get_Y_ResultForCandiate(currCandidate);
+            double existing_X = get_X_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
+            double existing_Y = get_Y_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
 
             // If both X & Y are within 0.3 of another icon, return true
             if (Math.abs(existing_X - result_X_current) < 0.3 &&
@@ -629,174 +625,12 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
 //            mTracker.setScreenName("Image~" + getResources().getString(R.string.anal_tag_rpt_save));
 //            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
+            String appName = getString(R.string.appname_export);
             PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
-            String jobName = "Promotion_Grid_Results";
+            String jobName = appName + "_Results";
             printManager.print(jobName, new MyPrintDocumentAdapter(this),
                     null);
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private String buildIconForEmail(Candidates currCandidate) {
-        // build icon for this candidate, save it to storage so it can be included in the e-mail
-        // amnd return a handle for the image
-        String currentColor = currCandidate.getCandidateColor();
-        // convert the String color to an int
-        int tmpcolor = Color.parseColor(currentColor);
-        Drawable d1 = getResources().getDrawable(R.drawable.empty_drawable, null);
-        Drawable[] emptyDrawableLayers = {d1};
-
-        drawPoint currDrawPoint = new drawPoint(getApplicationContext(), emptyDrawableLayers, 6, 6, tmpcolor);
-        LayerDrawable newPoint = currDrawPoint.getPoint(currCandidate.getCandidateInitials());
-
-        // convert the layerDrawable to bitmap so we can save it ...
-        Bitmap bitMapToSave = drawableToBitmap(newPoint);
-
-        File created_folder = getDir("custom", MODE_PRIVATE);
-        File dir = new File(created_folder, "custom_child");
-        dir.mkdirs();
-
-        String iconBitmapName = "icon_image_" + Long.toString(currCandidate.getCandidateID()) + ".png";
-        boolean doSave = true;
-        if (!dir.exists()) {
-            doSave = dir.mkdirs();
-        }
-        if (doSave) {
-            saveBitmapToFile(dir, iconBitmapName, bitMapToSave, Bitmap.CompressFormat.PNG, 100);
-        } else {
-            Log.e("app", "Couldn't create target directory for saving icon bitmap.");
-        }
-        String iconImageID = "image-icon" + Long.toString(currCandidate.getCandidateID());
-
-        return iconBitmapName;
-    }
-
-    //    }
-    /*
-    * Bitmap.CompressFormat can be PNG,JPEG or WEBP.
-    *
-    * quality goes from 1 to 100. (Percentage).
-    *
-    * dir you can get from many places like Environment.getExternalStorageDirectory() or mContext.getFilesDir()
-    * depending on where you want to save the image.
-    */
-    public boolean saveBitmapToFile(File dir, String fileName, Bitmap bm,
-                                    Bitmap.CompressFormat format, int quality) {
-
-        File imageFile = new File(dir, fileName);
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(imageFile);
-            bm.compress(format, quality, fos);
-            fos.close();
-
-            return true;
-        } catch (IOException e) {
-            Log.e("app", e.getMessage());
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-        return false;
-    }
-
-    public Bitmap readBitmapFromFile(File dir, String fileName) {
-        FileInputStream fis = null;
-
-        Bitmap tmpBitMap = null;
-        String fileString = dir + "/" + fileName;
-        File file = new File(fileString);
-        try {
-            fis = new FileInputStream(file);
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 8;
-            tmpBitMap = BitmapFactory.decodeFile(fileString, options);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return tmpBitMap;
-    }
-
-    public Bitmap drawableToBitmap(LayerDrawable pd) {
-        Bitmap bm = Bitmap.createBitmap(pd.getIntrinsicWidth(), pd.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        pd.setBounds(0, 0, pd.getIntrinsicWidth(), pd.getIntrinsicHeight());
-        pd.draw(new Canvas(bm));
-        return bm;
-    }
-
-    private double get_X_ResultForCandiate(Candidates currCandidate) {
-        double result = 0.0;
-        long questionID = -1;
-        long candidateID = currCandidate.getCandidateID();
-
-        for (int i = 0; i < questionsList.size(); i++) {
-            questionID = questionsList.get(i).getQuestionID();
-            if (candidateID != -1 && questionID != -1) {
-                // If the Axis of the current question is not X, then ignore it ...
-                if (questionsList.get(i).getQuestionAxis().equals("X")) {
-                    result = calcResponse(i, candidateID, questionID, result);
-                }
-            }
-        }
-        // divide result by 100, round to hundredth's place and return it.
-        return (((double) Math.round((result * 0.01) * 100d) / 100d));
-    }
-
-    private double get_Y_ResultForCandiate(Candidates currCandidate) {
-        double result = 0.0;
-        long questionID = -1;
-        long candidateID = currCandidate.getCandidateID();
-
-        for (int i = 0; i < questionsList.size(); i++) {
-            questionID = questionsList.get(i).getQuestionID();
-            if (candidateID != -1 && questionID != -1) {
-                // If the Axis of the current question is not Y, then ignore it ...
-                if (questionsList.get(i).getQuestionAxis().equals("Y")) {
-                    result = calcResponse(i, candidateID, questionID, result);
-                }
-            }
-        }
-        // divide result by 100, round to hundredth's place and return it.
-        return (((double) Math.round((result * 0.01) * 100d) / 100d));
-    }
-
-    private double calcResponse(int i, long candidateID, long questionID, double result) {
-        double returnResult = result;
-        int currResponse = 1;
-        int currWeight = 0;
-        String questionType = "S"; // default question type to Standard
-
-        // grab the weight
-        currWeight = questionsList.get(i).getQuestionWeight();
-        // grab the response ...
-        currResponse = evaluationOperations.getResponseValue(candidateID, questionID);
-        //  grab the quesiton type S = Standard, I = Inverse
-        questionType = questionsList.get(i).getQuestion_type();
-        if (currResponse > -1) {
-            // add the response multiplied by the weight and add it to the result ...
-            // if Standard ...
-            if (questionType.trim().equals("S")) {
-//                System.out.println( "  Inside questionType == S");
-
-                returnResult = result + (currResponse * currWeight);
-            } else {   // else must be Inverse, so subtract from 10
-                returnResult = result + ((10 - currResponse) * currWeight);
-            }
-            // TODO Remove
-//            System.out.println( "  --- result       = " + result);
-//            System.out.println( "  --- currWeight   = " + currWeight);
-//            System.out.println( "  --- currResponse = " + currResponse);
-//            System.out.println( "  --- questionType = " + questionType + "***");
-//            System.out.println( "  -> returnResult  = " + returnResult);
-        }
-        return returnResult;
     }
 
     /**
@@ -828,321 +662,6 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
     @Override
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
 
-    }
-
-    // http://www.techotopia.com/index.php/An_Android_Custom_Document_Printing_Tutorial
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
-        Context context;
-        private int pageHeight;
-        private int pageWidth;
-        public PdfDocument myPdfDocument;
-        public int totalpages = 0;  // start pages at 0 - always increment before adding
-
-        public int numCandidates = candidatesList.size();
-        public int totalPageSize = 750; // number of pixels available on a single page
-        public int canidateDetailHeight = 220;  // number of pixels taken-up by each Candidate details
-
-        public MyPrintDocumentAdapter(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public void onLayout(PrintAttributes oldAttributes,
-                             PrintAttributes newAttributes,
-                             CancellationSignal cancellationSignal,
-                             LayoutResultCallback callback,
-                             Bundle metadata) {
-
-            myPdfDocument = new PrintedPdfDocument(context, newAttributes);
-
-            // These dimensions are stored in the object in the form of thousandths of an inch. Since the methods that
-            // will use these values later work in units of 1/72 of an inch these numbers are converted before they are stored:
-            pageHeight =
-                    newAttributes.getMediaSize().getHeightMils() / 1000 * 72;
-            pageWidth =
-                    newAttributes.getMediaSize().getWidthMils() / 1000 * 72;
-
-            // NOTE:  the user’s color selection can be obtained via a call to the getColorMode() method
-            // of the PrintAttributes object which will return a value of either COLOR_MODE_COLOR or COLOR_MODE_MONOCHROME.
-
-            if (cancellationSignal.isCanceled()) {
-                callback.onLayoutCancelled();
-                return;
-            }
-
-            // calculate the number of pages needed ...
-            double spaceNeededPerPage = (numCandidates * canidateDetailHeight);
-
-            totalpages = (int) (Math.round((spaceNeededPerPage / (double) totalPageSize) + 0.5));
-
-            totalpages = totalpages + 1; // add one for first page
-
-            if (totalpages > 0) {
-                PrintDocumentInfo.Builder builder = new PrintDocumentInfo
-                        .Builder("print_output.pdf")
-                        .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-                        .setPageCount(totalpages);
-
-                PrintDocumentInfo info = builder.build();
-                callback.onLayoutFinished(info, true);
-            } else {
-                callback.onLayoutFailed("Page count is zero.");
-            }
-        }
-
-        @Override
-        public void onWrite(final PageRange[] pageRanges,
-                            final ParcelFileDescriptor destination,
-                            final CancellationSignal cancellationSignal,
-                            final WriteResultCallback callback) {
-
-            // Draw the Main page first ....
-            PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth,
-                    pageHeight, 1).create();
-
-            PdfDocument.Page page =
-                    myPdfDocument.startPage(newPage);
-
-            if (cancellationSignal.isCanceled()) {
-                callback.onWriteCancelled();
-                myPdfDocument.close();
-                myPdfDocument = null;
-                return;
-            }
-            drawMainPage(page, 1);
-            myPdfDocument.finishPage(page);
-
-            // Now, loop through candidates and write subsequent pages ...
-
-            candidateOperations = new CandidateOperations(this.context);
-            candidateOperations.open();
-            candidatesList = candidateOperations.getAllCandidates();
-
-            if (numCandidates == 0) {
-                // start the second page ...
-                newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
-                page = myPdfDocument.startPage(newPage);
-                drawDetailPageNoCanidates(page, 1);
-                myPdfDocument.finishPage(page);
-
-            } else {
-
-                int drawLine = 60;
-                // start the next page ...
-                newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
-                page = myPdfDocument.startPage(newPage);
-                // Loop through the candidates to build the details for the PDF File
-                for (int i = 0; i < numCandidates; i++) {
-
-                    if (cancellationSignal.isCanceled()) {
-                        callback.onWriteCancelled();
-                        myPdfDocument.close();
-                        myPdfDocument = null;
-                        return;
-                    }
-
-                    // Add the details for the current Candidate to the current page
-                    drawDetailPage(page, i, drawLine);
-                    drawLine = drawLine + canidateDetailHeight;
-
-                    if (drawLine > (totalPageSize - canidateDetailHeight)) {
-                        // if we can't fit any more canidates on the current page, finish it and start a new one
-                        myPdfDocument.finishPage(page);
-                        newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
-                        page = myPdfDocument.startPage(newPage);
-                        drawLine = 60;
-                    }
-
-                }
-                myPdfDocument.finishPage(page);
-            }
-
-            try {
-                myPdfDocument.writeTo(new FileOutputStream(
-                        destination.getFileDescriptor()));
-            } catch (IOException e) {
-                callback.onWriteFailed(e.toString());
-                return;
-            } finally {
-                myPdfDocument.close();
-                myPdfDocument = null;
-            }
-
-            callback.onWriteFinished(pageRanges);
-        }
-
-        private void drawDetailPage(PdfDocument.Page page,
-                                    int candidateNum, int drawLine) {
-
-            // variables to control placement and size of text ....
-            int drawTabH1 = 48;
-            int drawTabH2 = 82;
-            int drawTabH3 = 120;
-            int drawTabPara = 64;
-            int lineSpacingBig = 42;
-            int lineSpacing = 36;
-            int headingMain = 32;
-            int headingPara = 24;
-            int lineLength = 480;
-            int lineStrokeThick = 8;
-            int lineStrokeThin = 6;
-            int iconWidth = 80;
-            int iconTab = 440;
-            int iconAdjustment = 24;
-
-            Canvas canvas = page.getCanvas();
-
-            String detailString = " ";
-            currCandidate = candidatesList.get(candidateNum);
-            Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(headingMain);
-            paint.setFakeBoldText(true);
-
-            paint.setColor(Color.BLUE);
-            paint.setStrokeWidth(lineStrokeThick);
-            canvas.drawLine(drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
-
-            drawLine = drawLine + lineSpacingBig;
-
-            detailString = currCandidate.getCandidateName();
-            paint.setColor(Color.BLACK);
-            canvas.drawText(detailString, drawTabH1, drawLine, paint);
-
-            // grab candidate ICON from file system and draw it on the PDF page
-            File created_folder = getDir("custom", MODE_PRIVATE);
-            File dir = new File(created_folder, "custom_child");
-
-            // build the candidate icon, save it to storage, and grab the file name
-            String iconBitmapName = buildIconForEmail(currCandidate);
-
-            // Read in the icon bitmap
-            String fullUrl = dir + "/" + iconBitmapName;
-            Bitmap candIcon = BitmapFactory.decodeFile(fullUrl);
-
-            //scale bitmap to desired size
-            Bitmap finalIconScalled = Bitmap.createScaledBitmap(candIcon, iconWidth, iconWidth, true); // Make sure w and h are in the correct order
-
-            canvas.drawBitmap(finalIconScalled, iconTab, drawLine - iconAdjustment, paint);
-
-            paint.setTextSize(headingPara);
-            detailString = "(initials: ";
-            detailString += currCandidate.getCandidateInitials();
-            detailString += ")   ";
-            drawLine = drawLine + lineSpacing;
-            canvas.drawText(detailString, drawTabH1, drawLine, paint);
-
-            detailString = "Scores (out of 10): ";
-            drawLine = drawLine + lineSpacing;
-            canvas.drawText(detailString, drawTabH2, drawLine, paint);
-
-            detailString = "Performance:  ";
-            detailString += get_X_ResultForCandiate(currCandidate);
-            drawLine = drawLine + lineSpacing;
-            canvas.drawText(detailString, drawTabH3, drawLine, paint);
-
-            detailString = "Promotability:  ";
-            detailString += get_Y_ResultForCandiate(currCandidate);
-            drawLine = drawLine + lineSpacing;
-            canvas.drawText(detailString, drawTabH3, drawLine, paint);
-        }
-
-
-        private void drawDetailPageNoCanidates(PdfDocument.Page page, int drawLine) {
-
-            // variables to control placement and size of text ....
-            int drawTabH1 = 48;
-            int drawTabH2 = 82;
-            int lineSpacingBig = 42;
-            int lineSpacing = 36;
-            int headingMain = 32;
-            int headingPara = 24;
-            int lineLength = 480;
-            int lineStrokeThick = 8;
-
-            Canvas canvas = page.getCanvas();
-
-            String detailString = "No Candidates were entered. ";
-
-            Paint paint = new Paint();
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(headingMain);
-            paint.setFakeBoldText(true);
-
-            paint.setColor(Color.BLUE);
-            paint.setStrokeWidth(lineStrokeThick);
-            canvas.drawLine(drawTabH1, drawLine, (drawTabH1 + lineLength), drawLine, paint);
-
-            drawLine = drawLine + lineSpacingBig;
-
-            paint.setColor(Color.BLACK);
-            canvas.drawText(detailString, drawTabH1, drawLine, paint);
-
-            paint.setTextSize(headingPara);
-
-            detailString = "Please select Add People from the main menu. ";
-            drawLine = drawLine + lineSpacing;
-            canvas.drawText(detailString, drawTabH2, drawLine, paint);
-        }
-
-
-        private void drawMainPage(PdfDocument.Page page,
-                                  int pagenumber) {
-            Canvas canvas = page.getCanvas();
-
-            pagenumber++; // Make sure page numbers start at 1
-
-            // variables to control placement and size of text ....
-            int drawTabH1 = 48;
-            int drawTabPara = 64;
-            int drawLine = 60;
-            int lineSpacing = 36;
-            int headingMain = 32;
-            int headingPara = 24;
-
-            Paint paint = new Paint();
-            int titleBaseLine = 72;
-            int leftMargin = 54;
-            String subject = "Results from Promotion Grid";
-
-            String Message = "Greetings! ";
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(headingMain);
-            paint.setFakeBoldText(true);
-            canvas.drawText(Message, drawTabH1, drawLine, paint);
-            Message = "Here are your results from the Promotion Grid  ";
-            paint.setTextSize(headingPara);
-            paint.setFakeBoldText(false);
-            drawLine = drawLine + lineSpacing; // increment the line on which the text will be drawned
-            canvas.drawText(Message, drawTabPara, drawLine, paint);
-
-            drawLine = drawLine + lineSpacing; // increment the line on which the text will be drawned
-            Message = "app.  We've included the main grid plus details";
-            canvas.drawText(Message, drawTabPara, drawLine, paint);
-
-            drawLine = drawLine + lineSpacing; // increment the line on which the text will be drawned
-            Message = "on each person. ";
-            canvas.drawText(Message, drawTabPara, drawLine, paint);
-
-            // grab grid from file system and draw it on the PDF page
-            File created_folder = getDir("custom", MODE_PRIVATE);
-            File dir = new File(created_folder, "custom_child");
-
-            Bitmap finalGrid = readBitmapFromFile(dir, "current_report.png");
-
-            Paint paint2 = new Paint();
-            paint2.setAntiAlias(true);
-            paint2.setFilterBitmap(true);
-            paint2.setDither(true);
-
-            //scale bitmap
-            int h = 400; // height in pixels
-            int w = 400; // width in pixels
-            Bitmap finalGridScalled = Bitmap.createScaledBitmap(finalGrid, w, h, true); // Make sure w and h are in the correct order
-
-            canvas.drawBitmap(finalGridScalled, 120, 220, paint2);
-        }
     }
 
     // TODO find way to centralize this.  Can't simply add it to Utilites (can't call non-static method from static context)
@@ -1195,6 +714,3 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         return intent;
     }
 }
-
-
-
