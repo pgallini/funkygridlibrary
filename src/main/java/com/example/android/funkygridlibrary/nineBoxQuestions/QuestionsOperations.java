@@ -24,7 +24,8 @@ public class QuestionsOperations {
         private SQLiteDatabase database;
 
         public QuestionsOperations(Context context) {
-            dbHelper = new DatabaseOpenHelper(context);
+            dbHelper = DatabaseOpenHelper.getInstance(context);
+
         }
 
         public void open() throws SQLException {

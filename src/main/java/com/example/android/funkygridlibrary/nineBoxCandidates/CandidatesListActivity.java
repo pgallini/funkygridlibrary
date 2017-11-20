@@ -318,6 +318,10 @@ public class CandidatesListActivity extends AppCompatActivity implements OnShowc
             String returnCandidateInitials = (extras != null ? extras.getString("returnInitials") : " ");
             String returnMode = (extras != null ? extras.getString("returnMode") : " ");
 
+            // since switching from "new DatabaseOpenHelper()" to "DatabaseOpenHelper.getinstance()" I started getting the error:
+            //   attempt to re-open an already-closed object: SQLiteDatabase - so - I think i need to make sure to open candidateOperations .
+            candidateOperations.open();
+
             if(returnMode.equals("ADD")) {
                 // save to database
                 Candidates candidate = candidateOperations.addCandidate(returnCandidateName, returnCandidateNickName, returnCandidateNotes, returnCandidateColor, returnCandidateInitials);

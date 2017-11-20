@@ -55,7 +55,8 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         setSupportActionBar(toolbar);
         // load colors from DB for spinner ...
         // Spinner Drop down elements
-        dbHelper = new DatabaseOpenHelper(this);
+        dbHelper = DatabaseOpenHelper.getInstance(this);
+
         colorList = dbHelper.getAllColors();
 
         List<String> labels = getColorLabels(colorList);
