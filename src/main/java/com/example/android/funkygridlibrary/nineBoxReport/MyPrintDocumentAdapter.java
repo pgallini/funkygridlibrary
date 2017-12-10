@@ -84,8 +84,10 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
     private ArrayList<Questions> questionsList;
     private EvaluationOperations evaluationOperations;
 
-    MyPrintDocumentAdapter(Context context) {
+    public MyPrintDocumentAdapter(Context context, ArrayList<Candidates> currCandidatesList) {
+
         this.context = context;
+        candidatesList = currCandidatesList;
     }
 
     @Override
@@ -113,7 +115,6 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         // TODO - de-dup this with the same action in onWrite below
         candidateOperations = new CandidateOperations(this.context);
         candidateOperations.open();
-        candidatesList = candidateOperations.getAllCandidates();
         numCandidates = candidatesList.size();
 
         double spaceNeededPerPage = (numCandidates * canidateDetailHeight);
@@ -169,7 +170,6 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         // Now, loop through candidates and write subsequent pages ...
         candidateOperations = new CandidateOperations(this.context);
         candidateOperations.open();
-        candidatesList = candidateOperations.getAllCandidates();
         numCandidates = candidatesList.size();
 
         if (numCandidates == 0) {
@@ -187,9 +187,6 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
             // Loop through the candidates to build the details for the PDF File
             for (int i = 0; i < numCandidates; i++) {
 
-                // TODO Remove
-                System.out.println( "######## linePosition (before drawDetailPage = " + linePosition );
-
                 if (cancellationSignal.isCanceled()) {
                     callback.onWriteCancelled();
                     myPdfDocument.close();
@@ -199,20 +196,7 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
                 // Add the details for the current Candidate to the current page
                 drawDetailPage(page, i, questionsList, evaluationOperations);
 
-                // TODO Remove
-                System.out.println( "######## linePosition (after drawDetailPage) = " + linePosition );
-//                linePosition = linePosition + canidateDetailHeight;
-
-                // TODO Remove
-                System.out.println( "######## Candidate = " +candidatesList.get(i).getCandidateName() );
-                System.out.println( "######## linePosition = " + linePosition );
-                System.out.println( "######## canidateDetailHeight = " +canidateDetailHeight );
-                System.out.println( "######## totalPageSize = " + totalPageSize);
-
                 if ( (i < numCandidates - 1 ) && linePosition > (totalPageSize - canidateDetailHeight)) {
-                    // TODO Remove
-                    System.out.println( "######## Adding new page " );
-
                     // if we can't fit any more canidates on the current page, finish it and start a new one
                     myPdfDocument.finishPage(page);
                     pageNumber++;
@@ -226,12 +210,9 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
             // TODO change this to NOT start a new page if there is room
             // Now, draw the Recommendations page
             pageNumber++;
-            // TODO Remove
-            System.out.println( "######## pageNumber = " + pageNumber);
 
             newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create();
             page = myPdfDocument.startPage(newPage);
-//            linePosition = LINEPOSITIONSTART;
             drawRecommendation(page);
             myPdfDocument.finishPage(page);
         }
@@ -251,8 +232,8 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
     private void drawRecommendation(PdfDocument.Page page ) {
         // Grab top one or two people for recommendation
-        Candidates person_A = Utilities.getPerson_A(candidatesList);
-        Candidates person_B = Utilities.getPerson_B(candidatesList);
+        String Message2 = " ";
+
         canvas = page.getCanvas();
         Paint paint = new Paint();
 
@@ -262,27 +243,39 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
         drawLine(Color.BLUE, lineStrokeThin, headingMain );
 
-        Message = "Based on the insights provided, the Bird-in-Hand";
+        Message = "Based on the insights provided, the";
         drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
 
-        Message = "app makes the following recommendation:";
+        Message = "Bird-in-Hand app makes the following";
         drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
 
-        if( person_A != null) {
-            Message = "Spend more time and energy on ";
-            drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
-            if( person_B != null) {
-                // We have two top people - lets recommend them
-                Message = person_A.getCandidateName() + " and " + person_B.getCandidateName();
-                drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
-            } else {
-                // We only have one person - lets recommend them
-                Message = person_A.getCandidateName();
-                drawMessage(Message, Color.BLUE, headingPara, false, drawTabH1);
+        Message = "recommendation:";
+        drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
+
+        if(candidatesList.size() == 0 ) {
+            Message = "You haven't entered any people yet.  Get out there and start looking!";
+        } else {
+            ArrayList<String> recommendedNames = Utilities.getRecommendations(candidatesList);
+            int numberOfNames = recommendedNames.size();
+            switch (numberOfNames) {
+                case 0:
+                    Message = "   No one to recommend - keep looking!";
+                    break;
+                case 1:
+                    Message = "   Spend more time and energy on:";
+                    Message2 = "            " + recommendedNames.get(0);
+                    break;
+                case 2:
+                    Message = "   Spend more time and energy on:";
+                    Message2 = "       " + recommendedNames.get(0) + " and " + recommendedNames.get(1);
+                    break;
+                case 3:
+                    Message = "   Spend more time and energy on:";
+                    Message2 = recommendedNames.get(0) + "," + recommendedNames.get(1) + " and " + recommendedNames.get(2);
+                    break;
             }
         }
-        Message = "By spending more time ... ";
-        drawMessage( Message, Color.BLUE, headingPara, false, drawTabH1 );
+        drawRecommendaionBox( Message, Message2 );
     }
 
     private void drawDetailPage(PdfDocument.Page page, int candidateNum, ArrayList<Questions> questionsList, EvaluationOperations evaluationOperations) {
@@ -322,11 +315,11 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         drawMessage( detailString, Color.BLACK, headingPara, false, drawTabH1 );
 
         detailString = "Attraction:  ";
-        detailString += ReportHelper.get_X_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
+        detailString += ReportHelper.get_Y_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
         drawMessage( detailString, Color.BLACK, headingPara, false, drawTabH1 );
 
         detailString = "Availability:  ";
-        detailString += ReportHelper.get_Y_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
+        detailString += ReportHelper.get_X_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
         drawMessage( detailString, Color.BLACK, headingPara, false, drawTabH1 );
     }
 
@@ -401,7 +394,6 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         paint.setFakeBoldText(bold);
         canvas.drawText(message, tabStart, linePosition, paint);
         linePosition = linePosition + lineSpacing;
-        return;
     }
 
     public void drawLine(int color, int lineStroke, int tabStart ) {
@@ -410,11 +402,29 @@ public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
         paint.setStrokeWidth(lineStroke);
         canvas.drawLine(tabStart, linePosition, (tabStart + lineLength), linePosition, paint);
         linePosition = linePosition + lineSpacing;
-        return;
+    }
+
+    public void drawRecommendaionBox( String message, String message2 ) {
+        Paint paint = new Paint();
+        paint.setColor(Color.LTGRAY);
+        linePosition = linePosition + lineSpacing;
+        float right = (float) ( pageWidth - ( drawTabH1 * 0.5));
+        float bottom;
+        if( message2.trim().length() > 0 ) {
+            bottom = (float) ( linePosition * 1.6);
+        } else {
+            bottom = (float) ( linePosition * 1.5);
+        }
+        canvas.drawRect(drawTabH1, linePosition, right , bottom , paint );
+        linePosition = linePosition + lineSpacing + lineSpacing;
+
+        drawMessage( message, Color.BLACK, headingPara, true, drawTabH2 );
+        drawMessage( message2, Color.BLACK, headingPara, true, drawTabH2 );
+        linePosition = linePosition + lineSpacing + lineSpacing;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private String buildIconForEmail(Context context, Candidates currCandidate) {
+    public static String buildIconForEmail(Context context, Candidates currCandidate) {
         // build icon for this candidate, save it to storage and return a handle for the image
         String currentColor = currCandidate.getCandidateColor();
         // convert the String color to an int

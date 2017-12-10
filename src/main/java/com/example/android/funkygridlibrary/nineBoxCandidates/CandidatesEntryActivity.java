@@ -57,6 +57,8 @@ public class CandidatesEntryActivity extends AppCompatActivity implements Adapte
         // Spinner Drop down elements
         dbHelper = DatabaseOpenHelper.getInstance(this);
 
+        // TODO - the app keeps grabbing the same color for icons - FIX THIS!!!!!!
+
         colorList = dbHelper.getAllColors();
 
         List<String> labels = getColorLabels(colorList);

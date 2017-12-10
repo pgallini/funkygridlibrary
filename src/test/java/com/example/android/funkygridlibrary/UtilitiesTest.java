@@ -17,7 +17,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,142 +26,7 @@ public class UtilitiesTest {
     Context mMockContext;
 
     @Test
-    public void getPerson_A_One_people() {
-        Candidates candidate_A = new Candidates();
-        candidate_A.setCandidateName("Sally");
-        candidate_A.setxCoordinate(9);
-        candidate_A.setyCoordinate(9);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_A);
-
-        Candidates candidate = Utilities.getPerson_A(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Sal4ly"));
-    }
-
-    @Test
-    public void getPerson_A_Two_people() {
-        Candidates candidate_1 = new Candidates();
-        candidate_1.setCandidateName("Beth");
-        candidate_1.setxCoordinate(4);
-        candidate_1.setyCoordinate(4);
-
-        Candidates candidate_2 = new Candidates();
-        candidate_2.setCandidateName("Sonjay");
-        candidate_2.setxCoordinate(2);
-        candidate_2.setyCoordinate(2);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_2);
-        candidatesList.add(candidate_1);
-
-        Candidates candidate = Utilities.getPerson_A(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Beth"));
-    }
-
-    @Test
-    public void getPerson_A_Four_people() {
-        Candidates candidate_1 = new Candidates();
-        candidate_1.setCandidateName("Beth");
-        candidate_1.setxCoordinate(4);
-        candidate_1.setyCoordinate(4);
-
-        Candidates candidate_2 = new Candidates();
-        candidate_2.setCandidateName("Sonjay");
-        candidate_2.setxCoordinate(2);
-        candidate_2.setyCoordinate(2);
-
-        Candidates candidate_3 = new Candidates();
-        candidate_3.setCandidateName("Lee");
-        candidate_3.setxCoordinate(6);
-        candidate_3.setyCoordinate(4);
-
-        Candidates candidate_4 = new Candidates();
-        candidate_4.setCandidateName("Seth");
-        candidate_4.setxCoordinate(2);
-        candidate_4.setyCoordinate(2);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_2);
-        candidatesList.add(candidate_3);
-        candidatesList.add(candidate_1);
-        candidatesList.add(candidate_4);
-
-        Candidates candidate = Utilities.getPerson_A(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Lee"));
-    }
-
-    @Test
-    public void getPerson_B_One_people() {
-        Candidates candidate_1 = new Candidates();
-        candidate_1.setCandidateName("Sally");
-        candidate_1.setxCoordinate(9);
-        candidate_1.setyCoordinate(9);
-
-//        Candidates candidate_4 = new Candidates();
-//        candidate_4.setCandidateName("Seth");
-//        candidate_4.setxCoordinate(2);
-//        candidate_4.setyCoordinate(2);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_1);
-
-        Candidates candidate = Utilities.getPerson_B(candidatesList);
-        assertThat(candidate, is(nullValue()));
-    }
-
-
-    @Test
-    public void getPerson_B_Two_people() {
-        Candidates candidate_1 = new Candidates();
-        candidate_1.setCandidateName("Sally");
-        candidate_1.setxCoordinate(9);
-        candidate_1.setyCoordinate(9);
-
-        Candidates candidate_2 = new Candidates();
-        candidate_2.setCandidateName("Seth");
-        candidate_2.setxCoordinate(2);
-        candidate_2.setyCoordinate(2);
-
-
-        Candidates candidate_3 = new Candidates();
-        candidate_3.setCandidateName("Lee");
-        candidate_3.setxCoordinate(6);
-        candidate_3.setyCoordinate(4);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_1);
-        candidatesList.add(candidate_2);
-        candidatesList.add(candidate_3);
-
-
-        Candidates candidate = Utilities.getPerson_B(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Lee"));
-    }
-
-
-    @Test
-    public void getPerson_B_Three_people() {
-        Candidates candidate_1 = new Candidates();
-        candidate_1.setCandidateName("Sally");
-        candidate_1.setxCoordinate(9);
-        candidate_1.setyCoordinate(9);
-
-        Candidates candidate_2 = new Candidates();
-        candidate_2.setCandidateName("Seth");
-        candidate_2.setxCoordinate(2);
-        candidate_2.setyCoordinate(2);
-
-        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_1);
-        candidatesList.add(candidate_2);
-
-        Candidates candidate = Utilities.getPerson_B(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Seth"));
-    }
-
-    @Test
-    public void getPerson_B_Three_X_Greater_than_2() {
+    public void getRecommendations_3_people_test() {
         Candidates candidate_1 = new Candidates();
         candidate_1.setCandidateName("Sally");
         candidate_1.setxCoordinate(9);
@@ -179,37 +43,90 @@ public class UtilitiesTest {
         candidate_3.setyCoordinate(4);
 
         ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_1);
         candidatesList.add(candidate_2);
         candidatesList.add(candidate_3);
+        candidatesList.add(candidate_1);
 
-        Candidates candidate = Utilities.getPerson_B(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Seth"));
+        ArrayList<String> candidateList = Utilities.getRecommendations(candidatesList);
+        assertThat(candidateList.get(0), is("Sally"));
+        assertThat(candidateList.size(), is(1));
     }
 
     @Test
-    public void getPerson_B_Three_X_Less_than_2_Y_More_than_2() {
+    public void getRecommendations_5_people_test() {
         Candidates candidate_1 = new Candidates();
         candidate_1.setCandidateName("Sally");
-        candidate_1.setxCoordinate(9);
-        candidate_1.setyCoordinate(9);
+        candidate_1.setxCoordinate(3.5);
+        candidate_1.setyCoordinate(9.2);    // DQ'd
 
         Candidates candidate_2 = new Candidates();
         candidate_2.setCandidateName("Seth");
-        candidate_2.setxCoordinate(3);
-        candidate_2.setyCoordinate(9);
+        candidate_2.setxCoordinate(5.5);
+        candidate_2.setyCoordinate(7.9);    // 13.4
 
         Candidates candidate_3 = new Candidates();
         candidate_3.setCandidateName("Lee");
-        candidate_3.setxCoordinate(5.5);
-        candidate_3.setyCoordinate(4);
+        candidate_3.setxCoordinate(6.9);
+        candidate_3.setyCoordinate(4.8);    // 11.7
+
+        Candidates candidate_4 = new Candidates();
+        candidate_4.setCandidateName("Marie");
+        candidate_4.setxCoordinate(5);
+        candidate_4.setyCoordinate(4.9);     // 9.9
+
+        Candidates candidate_5 = new Candidates();
+        candidate_5.setCandidateName("Lee");
+        candidate_5.setxCoordinate(5.5);
+        candidate_5.setyCoordinate(5.5);    //11
 
         ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
-        candidatesList.add(candidate_1);
         candidatesList.add(candidate_2);
+        candidatesList.add(candidate_5);
         candidatesList.add(candidate_3);
+        candidatesList.add(candidate_4);
+        candidatesList.add(candidate_1);
 
-        Candidates candidate = Utilities.getPerson_B(candidatesList);
-        assertThat(candidate.getCandidateName(), is("Lee"));
+        ArrayList<String> candidateList = Utilities.getRecommendations(candidatesList);
+        assertThat(candidateList.get(0), is("Seth"));
+        assertThat(candidateList.get(1), is("Lee"));
+        assertThat(candidateList.size(), is(2));
+    }
+
+    @Test
+    public void getRecommendations_5_all_too_low_test() {
+        Candidates candidate_1 = new Candidates();
+        candidate_1.setCandidateName("Sally");
+        candidate_1.setxCoordinate(3.5);
+        candidate_1.setyCoordinate(9.2);    // DQ'd
+
+        Candidates candidate_2 = new Candidates();
+        candidate_2.setCandidateName("Seth");
+        candidate_2.setxCoordinate(5.5);
+        candidate_2.setyCoordinate(2.9);    // DQ'd
+
+        Candidates candidate_3 = new Candidates();
+        candidate_3.setCandidateName("Lee");
+        candidate_3.setxCoordinate(6.9);
+        candidate_3.setyCoordinate(3.8);    // DQ'd
+
+        Candidates candidate_4 = new Candidates();
+        candidate_4.setCandidateName("Marie");
+        candidate_4.setxCoordinate(0);
+        candidate_4.setyCoordinate(4.9);    // DQ'd
+
+        Candidates candidate_5 = new Candidates();
+        candidate_5.setCandidateName("Lee");
+        candidate_5.setxCoordinate(1.5);
+        candidate_5.setyCoordinate(1.5);     // DQ'd
+
+        ArrayList<Candidates> candidatesList = new ArrayList<Candidates>();
+        candidatesList.add(candidate_2);
+        candidatesList.add(candidate_5);
+        candidatesList.add(candidate_3);
+        candidatesList.add(candidate_4);
+        candidatesList.add(candidate_1);
+
+        ArrayList<String> candidateList = Utilities.getRecommendations(candidatesList);
+        assertThat(candidateList.size(), is(0));
     }
 }

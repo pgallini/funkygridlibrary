@@ -92,6 +92,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report);
 
+        // TODO - Looks like the report gets X & Y mixed up - FIX THIS!!!!!!
+
         Intent intent = getIntent();
         // the Main activity will send in the main toggle for the Tutorial ... grab it
         if (intent != null) {
@@ -229,6 +231,9 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             result_Y_axis = get_Y_ResultForCandiate(currCandidate, questionsList, evaluationOperations);
             currCandidate.setyCoordinate(result_Y_axis);
 
+            // TODO Remove
+            System.out.println(" $$$$  result_Y_axis ==  " + result_Y_axis);
+
             if (widgetsWillOverlap(result_X_axis, result_Y_axis, i, candidatesList)) {
                 // If this icon/widget will overlap with one already drawn, then make small adjustments so both are visible
                 result_X_axis = makeSmallAdjustment(result_X_axis);
@@ -238,6 +243,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             // set the physical locations (X & Y ) for current candidate
             candidatesList.get(i).setxPhysicalLocation(calcXphysicalLocation(result_X_axis, gridHeight, widget_width));
             candidatesList.get(i).setyPhysicalLocation(calcYphysicalLocation(result_Y_axis, gridHeight, widget_width, actionBarHeight));
+
+            // Now that we have calculated X & Y values for the current candidate, we need to save it to the DB
 
             // if API level is 23 or greater, than we can use addLayer
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -628,7 +635,8 @@ public class ReportActivity extends AppCompatActivity implements OnShowcaseEvent
             String appName = getString(R.string.appname_export);
             PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
             String jobName = appName + "_Results";
-            printManager.print(jobName, new MyPrintDocumentAdapter(this),
+            // we need to send candidatesList into the print adapter becuase it has the calculated results (and the DB does not)
+            printManager.print(jobName, new MyPrintDocumentAdapter(this, candidatesList),
                     null);
         }
     }

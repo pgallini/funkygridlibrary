@@ -18,67 +18,98 @@ import java.util.Comparator;
  * <p/>
  * Class to hold common utilities, functions, and methods.
  */
-class SortbyX implements Comparator<Candidates>
-{
-    // Used for sorting in ascending order of x Coordinate
-    public int compare(Candidates a, Candidates b)
-    {
-        int tempReturn = (int) a.getxCoordinate() - (int) b.getxCoordinate();
-        return tempReturn;
-    }
-}
-
 public class Utilities extends AppCompatActivity {
 
-    public static Candidates getPerson_A(ArrayList<Candidates> candidatesList) {
-        int listSize = candidatesList.size();
-        Candidates returnCandidate = null;
+    public static ArrayList<String> getRecommendations(ArrayList<Candidates> candidatesList) {
+        class CandidatesReccomended {
+            private String candidateName = " ";
+            private double xyTotal = 0.0;
+            private long candidateID = 0;
 
-        // TODO - fix this!!!!
-        if (listSize > 0) {
-            Collections.sort(candidatesList, new SortbyX());
-            returnCandidate = candidatesList.get(0);
-            System.out.println(" #####   returnCandidate.getCandidateName() =");
-            System.out.println(returnCandidate.getCandidateName());
-
-        };
-        return returnCandidate;
-    }
-
-    public static Candidates getPerson_B(ArrayList<Candidates> candidatesList) {
-        int listSize = candidatesList.size();
-        Candidates tempCandidate = null;
-
-        Collections.sort(candidatesList,new SortbyX());
-
-        if( listSize > 1 ) {
-            tempCandidate = candidatesList.get(1);
-
-            for (int i = 1; i < listSize; i++) {
-                // TODO Remove
-                System.out.println(" #####   i =");
-                System.out.println( i );
-                System.out.println(" #####   candidatesList.get(i).getCandidateName() =");
-                System.out.println(candidatesList.get(i).getCandidateName());
-
-                if( tempCandidate.getxCoordinate() < (candidatesList.get(i).getxCoordinate() + 2.0) ) {
-                    if( tempCandidate.getyCoordinate() < (candidatesList.get(i).getyCoordinate() + 2.0) ) {
-                        // While the current person has a great X value, it's not more than 2 AND
-                        //    the next person has a much higher Y value - so return them as Person B
-                        tempCandidate = candidatesList.get(i);
-//                        break;
-//                    } else {
-//                        break;
-                    }
-
-                } else {
-                        // the one we have is MORE than 2 points ahead of the next one, so lets return what we have
-                        break;
-                    }
-                }
+            public CandidatesReccomended() {
             }
 
-        return tempCandidate;
+            public String getCandidateName() {
+                return candidateName;
+            }
+
+            public void setCandidateName(String candidateName) {
+                this.candidateName = candidateName;
+            }
+
+            public double getXyTotal() {
+                return xyTotal;
+            }
+
+            public void setXyTotal(double xyTotal) {
+                this.xyTotal = xyTotal;
+            }
+
+            public long getCandidateID() {
+                return candidateID;
+            }
+
+            public void setCandidateID(long candidateID) {
+                this.candidateID = candidateID;
+            }
+        }
+
+        class SortbyXYTotal implements Comparator<CandidatesReccomended> {
+            // Used for sorting in ascending order of X+Y Total
+            public int compare(CandidatesReccomended a, CandidatesReccomended b) {
+                double tempReturn = b.getXyTotal() - a.getXyTotal();
+                if (tempReturn > 0) return 1;
+                if (tempReturn < 0) return -1;
+                return 0;
+            }
+        }
+
+        int allCandidatesListSize = candidatesList.size();
+        int MIN_X_VALUE = 4;
+        int MIN_Y_VALUE = 4;
+        ArrayList<String> returnCandidateNames = new ArrayList<String>();
+        ArrayList<CandidatesReccomended> candidatesReccomendedList = new ArrayList<CandidatesReccomended>();
+
+        for (int i = 0; i < allCandidatesListSize; i++) {
+            if (candidatesList.get(i).getxCoordinate() > MIN_X_VALUE &&
+                    candidatesList.get(i).getyCoordinate() > MIN_Y_VALUE) {
+                // if the X & Y vaues are at least above the min, let's add them to the temp list
+                CandidatesReccomended currentCandidate = new CandidatesReccomended();
+                currentCandidate.setCandidateID(candidatesList.get(i).getCandidateID());
+                currentCandidate.setCandidateName(candidatesList.get(i).getCandidateName());
+                currentCandidate.setXyTotal(candidatesList.get(i).getxCoordinate() + candidatesList.get(i).getyCoordinate());
+                candidatesReccomendedList.add(currentCandidate);
+                // TODO Remove
+                // System.out.println(" &&&&&&&&&& candidatesList.get(i).getCandidateName() ====");
+                // System.out.println(candidatesList.get(i).getCandidateName());
+            }
+        }
+
+        // Now sort to grab the one with the highest x + y total
+        Collections.sort(candidatesReccomendedList, new SortbyXYTotal());
+
+        // Now grab top 1 or 2 people
+        int crListSize = candidatesReccomendedList.size();
+
+        if (allCandidatesListSize > 3) {
+            // if there are 4 or more all together ... grab the top 2 that meet the mins
+            if (crListSize > 1) {
+                returnCandidateNames.add(candidatesReccomendedList.get(0).getCandidateName());
+                returnCandidateNames.add(candidatesReccomendedList.get(1).getCandidateName());
+            } else if (crListSize > 0) {
+                returnCandidateNames.add(candidatesReccomendedList.get(0).getCandidateName());
+            }
+        } else {
+            // if there are 3 or fewer all together ... only grab two if all three meet the mins
+            if (crListSize > 2) {
+                returnCandidateNames.add(candidatesReccomendedList.get(0).getCandidateName());
+                returnCandidateNames.add(candidatesReccomendedList.get(1).getCandidateName());
+            } else if (crListSize > 0) {
+                returnCandidateNames.add(candidatesReccomendedList.get(0).getCandidateName());
+            }
+        }
+
+        return returnCandidateNames;
     }
 
     public static Point getPointTarget(View targetView, double x_divisor) {
@@ -119,30 +150,4 @@ public class Utilities extends AppCompatActivity {
 
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
-
-//    public static void evalTutorialToggles(SharedPreferences.Editor editor) {
-//        if (!MainActivity.displayTutorialMain && !MainActivity.displayTutorialAdd && !MainActivity.displayTutorialEval &&
-//                !MainActivity.displayTutorialRpt) {
-//            // if ALL of the individual tutorials have now been displayed, turn-off the preference
-////            SharedPreferences settings = getSharedPreferences("preferences", Context.MODE_PRIVATE);
-////            SharedPreferences.Editor editor = settings.edit();
-//            editor.putBoolean("pref_sync", false);
-//            editor.apply();
-//            editor.commit();
-//        }
-    }
-
-//
-//    public RelativeLayout.LayoutParams getLayoutParms() {
-//        // set-up Layout parameters for the Tutorial
-//        //   Some more ideas on targets:
-//        //        http://stackoverflow.com/questions/33379121/using-showcaseview-to-target-action-bar-menu-item
-//        //
-//        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
-//        lps.setMargins(margin, margin, margin, margin);
-//        return lps;
-//    }
-//}
+}
